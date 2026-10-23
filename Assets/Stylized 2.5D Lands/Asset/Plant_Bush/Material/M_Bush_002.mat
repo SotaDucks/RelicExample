@@ -1,0 +1,198 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: M_Bush_002
+  m_Shader: {fileID: -6465566751694194690, guid: 20d360642f7a3fd48b9509f622d23431, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses:
+  - MOTIONVECTORS
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Base_Map:
+        m_Texture: {fileID: 2800000, guid: 9b452d874cf082845921a05a672ba1f7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Basemap:
+        m_Texture: {fileID: 2800000, guid: 9b452d874cf082845921a05a672ba1f7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Emission_Map:
+        m_Texture: {fileID: 2800000, guid: b979f088cb21f374aae5383c87e23cf7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _N:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Ramp_Map:
+        m_Texture: {fileID: 2800000, guid: cae717e3a654c324d9965735f0414e3a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _Alpha: 0
+    - _AlphaClip: 0
+    - _Alpha_Channel: 1
+    - _Alpha_Clip: 0.5
+    - _Blend: 0
+    - _Bottom_Range: 0.3
+    - _Bottom_Range_Power: 0.7
+    - _Bottom_Value: 0.3
+    - _BumpScale: 1
+    - _ClearCoatMask: 0
+    - _ClearCoatSmoothness: 0
+    - _Contour_Range: 0.787
+    - _Cull: 2
+    - _Cutoff: 0.5
+    - _Density: 0.6
+    - _DetailAlbedoMapScale: 1
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _Emission_Strength: 0.1
+    - _EnvironmentReflections: 1
+    - _Float: 0
+    - _Float_1: 0
+    - _GlossMapScale: 0
+    - _Glossiness: 0
+    - _GlossyReflections: 0
+    - _Greyscale: 0
+    - _Greyscale_Map: 0
+    - _Hardness: 0
+    - _Inner_Value: 2.35
+    - _Metallic: 0
+    - _OcclusionStrength: 1
+    - _Outer_Value: 2.97
+    - _POWER: 0
+    - _Parallax: 0.005
+    - _Position: 1
+    - _QueueControl: 0
+    - _QueueOffset: 0
+    - _ReceiveShadows: 1
+    - _Shadow: 0.5
+    - _Smoothness: 0.2
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _Speed: 1
+    - _SrcBlend: 1
+    - _Strength: 0.3
+    - _Surface: 0
+    - _Top_Range: -1.41
+    - _Top_Range_Power: 0
+    - _Top_Value: 0.204
+    - _UV1: 1
+    - _UV1_Falloff: 0.1
+    - _UV1_Hardness: 0
+    - _UV2: 0
+    - _Variation_Seed: 0
+    - _Variation_Threshold: 0.1
+    - _Variation_Value: 0.3
+    - _Wind_Density: 0.4
+    - _Wind_Speed: 3
+    - _Wind_Strength: 0.2
+    - _WorkflowMode: 1
+    - _ZWrite: 1
+    - _mul: 0
+    m_Colors:
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Base_Color: {r: 0.77254903, g: 0.80251986, b: 0.90588236, a: 0}
+    - _Bottom_Color: {r: 0.19624421, g: 0.3962264, b: 0.3370062, a: 0}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Direction: {r: 0.6, g: 0.4, b: 0, a: 0}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Emission_Color: {r: 0.0754717, g: 0.23870127, b: 0.3018868, a: 0}
+    - _Inner_Color: {r: 0.43974727, g: 0.49296257, b: 0.509434, a: 0}
+    - _Outer_Color: {r: 0.5312473, g: 0.52156866, b: 0.6784314, a: 0}
+    - _Shadow_Color: {r: 0.36792448, g: 0.36792448, b: 0.36792448, a: 0}
+    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _Top_Color: {r: 0.7372549, g: 0.865947, b: 0.98039216, a: 0}
+    - _Variation_Color_A: {r: 0.4509804, g: 0.50980395, b: 0.50228196, a: 0}
+    - _Variation_Color_B: {r: 0.45122817, g: 0.48341367, b: 0.49056602, a: 0}
+    - _Variation_Color_C: {r: 0.30371127, g: 0.32687414, b: 0.3679245, a: 0}
+    - _Variation_Color_D: {r: 0.45768064, g: 0.47650748, b: 0.5188679, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!114 &6050079376013280414
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 10
