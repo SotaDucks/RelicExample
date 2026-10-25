@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 3a869e64de20e5a46ab534a1432c0a53
+timeCreated: 1466239254
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 109959
+  packageName: Kaoru
+  packageVersion: 3.0
+  assetPath: Assets/Suriyun/Scripts/Swapper.cs
+  uploadId: 727308

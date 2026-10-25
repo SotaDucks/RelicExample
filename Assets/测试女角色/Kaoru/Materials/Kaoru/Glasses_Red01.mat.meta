@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: f183023c007662f4fb946a58970dd815
+timeCreated: 1516770571
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 109959
+  packageName: Kaoru
+  packageVersion: 3.0
+  assetPath: Assets/Suriyun/Kaoru/Materials/Kaoru/Glasses_Red01.mat
+  uploadId: 727308

@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 055d636577cd89747a722480216213c2
+timeCreated: 1516771083
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 109959
+  packageName: Kaoru
+  packageVersion: 3.0
+  assetPath: Assets/Suriyun/Kaoru/Prefab/Kaoru_schooluniform.prefab
+  uploadId: 727308

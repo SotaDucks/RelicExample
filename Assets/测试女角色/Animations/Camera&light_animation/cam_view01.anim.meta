@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6d4f2534751363149989ffc0614f374f
+timeCreated: 1484580638
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 109959
+  packageName: Kaoru
+  packageVersion: 3.0
+  assetPath: Assets/Suriyun/Animations/Camera&light_animation/cam_view01.anim
+  uploadId: 727308

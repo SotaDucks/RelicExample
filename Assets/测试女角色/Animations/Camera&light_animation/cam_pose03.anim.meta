@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 044e5b6fd4c29fd49a1a4bd589c86f5f
+timeCreated: 1490325314
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 109959
+  packageName: Kaoru
+  packageVersion: 3.0
+  assetPath: Assets/Suriyun/Animations/Camera&light_animation/cam_pose03.anim
+  uploadId: 727308

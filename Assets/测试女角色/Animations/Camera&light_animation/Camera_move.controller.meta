@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0993a909246c19d4682e857999fa13cc
+timeCreated: 1449853660
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 109959
+  packageName: Kaoru
+  packageVersion: 3.0
+  assetPath: Assets/Suriyun/Animations/Camera&light_animation/Camera_move.controller
+  uploadId: 727308
