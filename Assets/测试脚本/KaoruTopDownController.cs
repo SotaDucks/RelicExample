@@ -2,152 +2,191 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-/// <summary>Camera-relative running and mouse-directed attacks for Kaoru.</summary>
+/// <summary>Camera-relative movement; animation transitions belong to the Animator graph.</summary>
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider), typeof(Animator))]
 [AddComponentMenu("Kaoru/Top Down Controller")]
 public sealed class KaoruTopDownController : MonoBehaviour
 {
-    private static readonly int IdleState = Animator.StringToHash("Base Layer.Idle");
-    private static readonly int RunState = Animator.StringToHash("Base Layer.Run");
-    private static readonly int AttackState = Animator.StringToHash("Base Layer.Attack");
-    private static readonly int TurnParameter = Animator.StringToHash("Turn");
+    public const string MovingParameterName = "IsMoving";
+    public const string TurnParameterName = "Turn";
+    public const string AttackParameterName = "Attack";
+    public const string AttackSpeedParameterName = "AttackSpeed";
+    public const string AttackTag = "Attack";
+
+    private static readonly int MovingParameter = Animator.StringToHash(MovingParameterName);
+    private static readonly int TurnParameter = Animator.StringToHash(TurnParameterName);
+    private static readonly int AttackParameter = Animator.StringToHash(AttackParameterName);
+    private static readonly int AttackSpeedParameter = Animator.StringToHash(AttackSpeedParameterName);
+    private const float DirectionEpsilon = 0.0001f;
 
     [Header("References")]
-    [Tooltip("Use the camera rendering the world, including PixelCamera when using the pixel camera system.")]
+    [Tooltip("World-rendering camera. For PixelCamera use PixelCamera rather than ViewCamera.")]
     [SerializeField] private Camera gameplayCamera;
     [SerializeField] private RuntimeAnimatorController animationController;
-    [SerializeField] private AnimationClip attackClip;
 
     [Header("Running")]
     [Min(0f)] [SerializeField] private float runSpeed = 4f;
-    [Min(0f)] [SerializeField] private float turnSpeed = 1080f;
-    [Tooltip("Heading error that gives the left/right running animation full weight, in degrees.")]
+    [Min(1f)] [SerializeField] private float turnSpeed = 540f;
+    [Min(1f)] [SerializeField] private float acceleration = 28f;
+    [Min(1f)] [SerializeField] private float deceleration = 40f;
+    [Tooltip("Heading error at which RunA_L / RunA_R receives full weight.")]
     [Range(5f, 180f)] [SerializeField] private float fullTurnAnimationAngle = 45f;
-    [Tooltip("Smooths the blend between RunA, RunA_L and RunA_R while preserving the running cycle.")]
-    [Min(0f)] [SerializeField] private float turnAnimationDamping = 0.06f;
+    [Min(0f)] [SerializeField] private float turnAnimationDamping = 0.1f;
 
-    [Header("Animation")]
-    [Min(0f)] [SerializeField] private float blendDuration = 0.1f;
-    [Min(0.01f)] [SerializeField] private float attackSpeed = 1f;
+    [Header("Attack")]
+    [Tooltip("Multiplies only AttackA1. Animator state base speed remains 1.")]
+    [Range(0.1f, 3f)] [SerializeField] private float attackSpeed = 1f;
     [SerializeField] private bool faceMouseWhenAttacking = true;
 
     private Rigidbody body;
     private Animator characterAnimator;
     private Vector3 movementDirection;
     private Vector3 facingDirection;
-    private float attackTimeRemaining;
-    private int currentState;
+    private bool attackRequested;
+    private bool ready;
     private float lastTurnSign = 1f;
+    private float targetTurn;
 
-    public bool IsAttacking => attackTimeRemaining > 0f;
+    // Lock physics from the request frame through the complete outgoing blend.
+    public bool IsAttacking => ready && (attackRequested || AnimatorIsAttacking());
     public Vector3 MovementDirection => movementDirection;
 
     private void Awake()
     {
         body = GetComponent<Rigidbody>();
         characterAnimator = GetComponent<Animator>();
-
-        if (animationController == null || attackClip == null)
+        if (animationController != null)
+            characterAnimator.runtimeAnimatorController = animationController;
+        if (!HasParameter(MovingParameter, AnimatorControllerParameterType.Bool) ||
+            !HasParameter(TurnParameter, AnimatorControllerParameterType.Float) ||
+            !HasParameter(AttackParameter, AnimatorControllerParameterType.Trigger) ||
+            !HasParameter(AttackSpeedParameter, AnimatorControllerParameterType.Float))
         {
-            Debug.LogError("Kaoru 控制器尚未配置。请选择 Kaoru，然后执行 Tools > Kaoru > Configure Selected Character。", this);
+            Debug.LogError("Kaoru Animator 未配置。请选择角色并执行 Tools > Kaoru > Configure Selected Character。", this);
             enabled = false;
             return;
         }
-
-        // The asset's display controller and root motion must not drive the player.
-        characterAnimator.runtimeAnimatorController = animationController;
         characterAnimator.applyRootMotion = false;
         characterAnimator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
         characterAnimator.updateMode = AnimatorUpdateMode.Normal;
         characterAnimator.speed = 1f;
+        ResolveCamera();
+        ready = true;
+    }
 
-        // The supplied prefab freezes horizontal position. Allow XZ movement and
-        // let gravity/collisions handle height while keeping the character upright.
-        body.isKinematic = false;
-        body.useGravity = true;
-        body.constraints = RigidbodyConstraints.FreezeRotation;
-        body.interpolation = RigidbodyInterpolation.Interpolate;
-        body.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-
-        if (gameplayCamera == null)
-            gameplayCamera = Camera.main;
-
-        facingDirection = transform.forward;
+    private void OnEnable()
+    {
+        if (!ready)
+            return;
+        movementDirection = Vector3.zero;
+        facingDirection = body.rotation * Vector3.forward;
+        targetTurn = 0f;
+        attackRequested = false;
+        // Activation resets to the graph's default. No gameplay Play/CrossFade.
+        characterAnimator.Rebind();
+        characterAnimator.SetBool(MovingParameter, false);
         characterAnimator.SetFloat(TurnParameter, 0f);
-        characterAnimator.Play(IdleState, 0, 0f);
-        currentState = IdleState;
+        characterAnimator.SetFloat(AttackSpeedParameter, attackSpeed);
+        characterAnimator.ResetTrigger(AttackParameter);
     }
 
     private void Update()
     {
         if (Time.timeScale <= 0f)
             return;
-
-        Vector2 input = ReadMovement();
-        movementDirection = GetWorldDirection(input);
-
-        if (IsAttacking)
-            attackTimeRemaining = Mathf.Max(0f, attackTimeRemaining - Time.deltaTime);
-
+        if (attackRequested && AnimatorIsAttacking())
+            attackRequested = false;
+        movementDirection = GetWorldDirection(ReadMovement());
+        // Intent stays current while attacking, so exit conditions choose the
+        // correct locomotion state when the animation has actually finished.
+        bool moving = movementDirection.sqrMagnitude > DirectionEpsilon && runSpeed > 0f;
+        characterAnimator.SetBool(MovingParameter, moving);
+        characterAnimator.SetFloat(AttackSpeedParameter, Mathf.Clamp(attackSpeed, 0.1f, 3f));
         Mouse mouse = Mouse.current;
-        bool pointerOverUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
-        if (!IsAttacking && mouse != null && mouse.leftButton.wasPressedThisFrame && !pointerOverUI)
-            StartAttack(mouse.position.ReadValue());
-
-        if (!IsAttacking)
-        {
-            if (movementDirection.sqrMagnitude > 0.001f)
-                facingDirection = movementDirection;
-
-            ChangeState(movementDirection.sqrMagnitude > 0.001f ? RunState : IdleState);
-        }
-
-        UpdateTurnAnimation();
-    }
-
-    private void UpdateTurnAnimation()
-    {
-        if (IsAttacking || movementDirection.sqrMagnitude <= 0.001f)
-        {
-            characterAnimator.SetFloat(TurnParameter, 0f);
-            return;
-        }
-
-        // Use the actual physics heading, not A/D keys or the interpolated render
-        // transform: either key can mean a left or right turn depending on facing.
-        float angle = Vector3.SignedAngle(body.rotation * Vector3.forward, movementDirection, Vector3.up);
-        float magnitude = Mathf.Abs(angle);
-        if (magnitude > 3f && magnitude < 175f)
-            lastTurnSign = Mathf.Sign(angle);
-
-        // A 180-degree reversal has two equally short paths. Retain the previous
-        // turning side so the animation and physical rotation agree without jitter.
-        if (magnitude >= 175f)
-            angle = magnitude * lastTurnSign;
-
-        float turn = Mathf.Sign(angle) * Mathf.InverseLerp(3f, fullTurnAnimationAngle, magnitude);
-        characterAnimator.SetFloat(TurnParameter, turn, turnAnimationDamping, Time.deltaTime);
+        bool overUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+        if (mouse != null && mouse.leftButton.wasPressedThisFrame && !overUI && !IsAttacking)
+            RequestAttack(mouse.position.ReadValue());
+        if (!IsAttacking && moving)
+            facingDirection = movementDirection.normalized;
+        characterAnimator.SetFloat(TurnParameter, IsAttacking || !moving ? 0f : targetTurn,
+            turnAnimationDamping, Time.deltaTime);
     }
 
     private void FixedUpdate()
     {
-        Vector3 velocity = IsAttacking ? Vector3.zero : movementDirection * runSpeed;
-        velocity.y = body.linearVelocity.y;
-        body.linearVelocity = velocity;
-
-        if (facingDirection.sqrMagnitude > 0.001f)
+        if (!ready)
+            return;
+        bool attacking = IsAttacking;
+        Vector3 planarVelocity = Vector3.ProjectOnPlane(body.linearVelocity, Vector3.up);
+        Vector3 desiredVelocity = movementDirection * runSpeed;
+        planarVelocity = attacking ? Vector3.zero : Vector3.MoveTowards(planarVelocity, desiredVelocity,
+            (desiredVelocity.sqrMagnitude > DirectionEpsilon ? acceleration : deceleration) * Time.fixedDeltaTime);
+        body.linearVelocity = planarVelocity + Vector3.up * body.linearVelocity.y;
+        if (facingDirection.sqrMagnitude <= DirectionEpsilon)
+            return;
+        float angle = Vector3.SignedAngle(body.rotation * Vector3.forward, facingDirection, Vector3.up);
+        float magnitude = Mathf.Abs(angle);
+        if (magnitude > 2f && magnitude < 175f)
+            lastTurnSign = Mathf.Sign(angle);
+        // Keep the same side on an ambiguous 180-degree reversal.
+        if (magnitude >= 175f)
+            angle = magnitude * lastTurnSign;
+        targetTurn = attacking ? 0f : Mathf.Sign(angle) * Mathf.InverseLerp(2f, fullTurnAnimationAngle, magnitude);
+        if (attacking)
+            body.MoveRotation(Quaternion.LookRotation(facingDirection, Vector3.up));
+        else
         {
-            Quaternion targetRotation = Quaternion.LookRotation(facingDirection, Vector3.up);
-            // Resolve an exactly opposite target with the same side as the RunA blend.
-            float remainingAngle = Vector3.Angle(body.rotation * Vector3.forward, facingDirection);
-            if (!IsAttacking && remainingAngle >= 175f)
-                targetRotation = body.rotation * Quaternion.Euler(0f,
-                    lastTurnSign * Mathf.Min(turnSpeed * Time.fixedDeltaTime, remainingAngle), 0f);
-            body.MoveRotation(IsAttacking
-                ? targetRotation
-                : Quaternion.RotateTowards(body.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime));
+            float step = Mathf.Clamp(angle, -turnSpeed * Time.fixedDeltaTime, turnSpeed * Time.fixedDeltaTime);
+            body.MoveRotation(body.rotation * Quaternion.AngleAxis(step, Vector3.up));
         }
+    }
+
+    private void RequestAttack(Vector2 screenPosition)
+    {
+        if (!characterAnimator.isActiveAndEnabled)
+            return;
+        if (faceMouseWhenAttacking)
+        {
+            ResolveCamera();
+            if (gameplayCamera != null && Screen.width > 0 && Screen.height > 0)
+            {
+                // Normalized screen coordinates also work with PixelCamera's
+                // lower-resolution RenderTexture.
+                Vector3 viewport = new Vector3(screenPosition.x / Screen.width, screenPosition.y / Screen.height);
+                Ray ray = gameplayCamera.ViewportPointToRay(viewport);
+                Plane ground = new Plane(Vector3.up, body.position);
+                if (ground.Raycast(ray, out float distance))
+                {
+                    Vector3 direction = Vector3.ProjectOnPlane(ray.GetPoint(distance) - body.position, Vector3.up);
+                    if (direction.sqrMagnitude > DirectionEpsilon)
+                        facingDirection = direction.normalized;
+                }
+            }
+        }
+        attackRequested = true;
+        targetTurn = 0f;
+        characterAnimator.SetFloat(TurnParameter, 0f);
+        characterAnimator.SetTrigger(AttackParameter);
+        body.linearVelocity = Vector3.up * body.linearVelocity.y;
+    }
+
+    private bool AnimatorIsAttacking()
+    {
+        if (!characterAnimator.isInitialized)
+            return false;
+        return characterAnimator.GetCurrentAnimatorStateInfo(0).IsTag(AttackTag) ||
+            (characterAnimator.IsInTransition(0) && characterAnimator.GetNextAnimatorStateInfo(0).IsTag(AttackTag));
+    }
+
+    private bool HasParameter(int hash, AnimatorControllerParameterType type)
+    {
+        if (characterAnimator.runtimeAnimatorController == null)
+            return false;
+        foreach (AnimatorControllerParameter parameter in characterAnimator.parameters)
+            if (parameter.nameHash == hash && parameter.type == type)
+                return true;
+        return false;
     }
 
     private static Vector2 ReadMovement()
@@ -155,7 +194,6 @@ public sealed class KaoruTopDownController : MonoBehaviour
         Keyboard keyboard = Keyboard.current;
         if (keyboard == null)
             return Vector2.zero;
-
         return Vector2.ClampMagnitude(new Vector2(
             (keyboard.dKey.isPressed ? 1f : 0f) - (keyboard.aKey.isPressed ? 1f : 0f),
             (keyboard.wKey.isPressed ? 1f : 0f) - (keyboard.sKey.isPressed ? 1f : 0f)), 1f);
@@ -163,72 +201,34 @@ public sealed class KaoruTopDownController : MonoBehaviour
 
     private Vector3 GetWorldDirection(Vector2 input)
     {
+        ResolveCamera();
         if (gameplayCamera == null)
             return new Vector3(input.x, 0f, input.y);
-
         Vector3 forward = Vector3.ProjectOnPlane(gameplayCamera.transform.forward, Vector3.up);
-        if (forward.sqrMagnitude < 0.001f)
+        if (forward.sqrMagnitude <= DirectionEpsilon)
             forward = Vector3.ProjectOnPlane(gameplayCamera.transform.up, Vector3.up);
-
         forward.Normalize();
-        Vector3 right = Vector3.Cross(Vector3.up, forward);
-        return Vector3.ClampMagnitude(right * input.x + forward * input.y, 1f);
+        return Vector3.ClampMagnitude(Vector3.Cross(Vector3.up, forward) * input.x + forward * input.y, 1f);
     }
 
-    private void StartAttack(Vector2 screenPosition)
+    private void ResolveCamera()
     {
-        if (faceMouseWhenAttacking && gameplayCamera != null)
-        {
-            // Viewport coordinates also work when PixelCamera renders to a small
-            // RenderTexture instead of directly to the screen.
-            Vector3 viewport = new Vector3(screenPosition.x / Screen.width, screenPosition.y / Screen.height, 0f);
-            Ray ray = gameplayCamera.ViewportPointToRay(viewport);
-            Plane groundPlane = new Plane(Vector3.up, body.position);
-            if (groundPlane.Raycast(ray, out float distance))
-            {
-                Vector3 direction = Vector3.ProjectOnPlane(ray.GetPoint(distance) - body.position, Vector3.up);
-                if (direction.sqrMagnitude > 0.001f)
-                    facingDirection = direction.normalized;
-            }
-        }
-
-        attackTimeRemaining = attackClip.length / attackSpeed;
-        characterAnimator.SetFloat(TurnParameter, 0f);
-        characterAnimator.speed = attackSpeed;
-        // A fresh click on the exact frame an attack finishes must restart it too.
-        characterAnimator.CrossFadeInFixedTime(AttackState, blendDuration, 0, 0f);
-        currentState = AttackState;
-    }
-
-    private void ChangeState(int state)
-    {
-        if (currentState == state)
-            return;
-
-        if (state != AttackState)
-            characterAnimator.speed = 1f;
-
-        characterAnimator.CrossFadeInFixedTime(state, blendDuration, 0, 0f);
-        currentState = state;
+        if (gameplayCamera == null)
+            gameplayCamera = Camera.main;
     }
 
     private void OnDisable()
     {
         movementDirection = Vector3.zero;
-        attackTimeRemaining = 0f;
-        if (body != null && !body.isKinematic)
-            body.linearVelocity = new Vector3(0f, body.linearVelocity.y, 0f);
-    }
-
-    private void OnEnable()
-    {
-        // Also recover correctly when the component is disabled during an attack.
-        if (characterAnimator != null && animationController != null)
+        targetTurn = 0f;
+        attackRequested = false;
+        if (ready && characterAnimator != null && characterAnimator.isInitialized)
         {
-            characterAnimator.speed = 1f;
+            characterAnimator.ResetTrigger(AttackParameter);
+            characterAnimator.SetBool(MovingParameter, false);
             characterAnimator.SetFloat(TurnParameter, 0f);
-            characterAnimator.Play(IdleState, 0, 0f);
-            currentState = IdleState;
         }
+        if (body != null && !body.isKinematic)
+            body.linearVelocity = Vector3.up * body.linearVelocity.y;
     }
 }
