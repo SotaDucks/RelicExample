@@ -37,7 +37,8 @@
 
 # Unity YAML files
 *.anim                  unity-yaml
-*.asset                 unity-yaml
+# .asset files can contain YAML or binary data. Detect text before converting EOLs.
+*.asset                 unity-yaml text=auto
 *.brush                 unity-yaml
 *.controller            unity-yaml
 *.flare                 unity-yaml
@@ -167,5 +168,11 @@ Packages/packages-lock.json linguist-generated
 # Spine export file for Unity
 *.skel.bytes            lfs
 
-# Exceptions for .asset files such as lightning pre-baking
+# Binary Unity assets. These rules must follow the generic .asset rule.
 LightingData.asset     binary
+*.terrain.asset        binary
+"Assets/3DPixelArtEnvironment/Demo/*Terrain*.asset" binary
+"Assets/LMHPOLY/Low Poly Nature Bundle/Modular Terrain/Terrain_Assets/Meshes/Terrain/U_Terrain_Data/*.asset" binary
+"Assets/Stylized 2.5D Lands/Scenes/*/Terrain Level*.asset" binary
+"Assets/场景的地形数据.asset" binary
+"Packages/com.distantlands.cozy.core/Content/Demo/Terrain/*.asset" binary
