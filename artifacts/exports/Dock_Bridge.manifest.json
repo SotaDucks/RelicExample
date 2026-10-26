@@ -1,0 +1,131 @@
+{
+  "source": "Assets/逆向出来的物体/Dock.prefab",
+  "unityVersion": "6000.3.7f1",
+  "requiredPackages": [
+    "com.unity.render-pipelines.universal@17.3.0",
+    "com.unity.shadergraph@17.3.0"
+  ],
+  "assetCount": 24,
+  "assets": [
+    {
+      "path": "Assets/3DPixelArtEnvironment/Shaders/Includes/CloudNoise.hlsl",
+      "guid": "646141f846fdbfd45939964b9331f304",
+      "bytes": 1603
+    },
+    {
+      "path": "Assets/3DPixelArtEnvironment/Shaders/Includes/Outlines.hlsl",
+      "guid": "634197ba2a8223c4e8cb775224be0e01",
+      "bytes": 2374
+    },
+    {
+      "path": "Assets/3DPixelArtEnvironment/Shaders/Includes/ShadowProjection.hlsl",
+      "guid": "d104ce3b34fd2da479719801f5ab8f3e",
+      "bytes": 252
+    },
+    {
+      "path": "Assets/3DPixelArtEnvironment/Shaders/Includes/SimplexNoise3D.hlsl",
+      "guid": "ba2db84d8513fd54e89d4e3331ae0c31",
+      "bytes": 4491
+    },
+    {
+      "path": "Assets/3DPixelArtEnvironment/Shaders/Subgraphs/AdditionalLightsAttenuation.shadersubgraph",
+      "guid": "1c45ec3164a52e04695b226151708ddd",
+      "bytes": 38415
+    },
+    {
+      "path": "Assets/3DPixelArtEnvironment/Shaders/Subgraphs/CloudShadows.shadersubgraph",
+      "guid": "5e8a6cc9c7132d64e9b82aaf9a2e8bc2",
+      "bytes": 59929
+    },
+    {
+      "path": "Assets/3DPixelArtEnvironment/Shaders/Subgraphs/PixelOutlines.shadersubgraph",
+      "guid": "87fea7def41d5e14ba0c8da9a62033bf",
+      "bytes": 22324
+    },
+    {
+      "path": "Assets/3DPixelArtEnvironment/Shaders/Subgraphs/ToonLighting.shadersubgraph",
+      "guid": "335eb9a4e3f2bf546b8b8e8b90ee4e15",
+      "bytes": 138830
+    },
+    {
+      "path": "Assets/3DPixelArtEnvironment/Shaders/Subgraphs/ToonRamp.shadersubgraph",
+      "guid": "9964fda8dab8a274fbdd764139f10936",
+      "bytes": 32923
+    },
+    {
+      "path": "Assets/3DPixelArtEnvironment/Shaders/Toon.shadergraph",
+      "guid": "378227f8a69213e419dfb0d889d8dd2f",
+      "bytes": 129682
+    },
+    {
+      "path": "Assets/3DPixelArtEnvironment/Shaders/URP_ShaderGraphCustomLighting/CustomLighting.hlsl",
+      "guid": "d85f1b91349aa1a42a8a390e37416584",
+      "bytes": 19992
+    },
+    {
+      "path": "Assets/3DPixelArtEnvironment/Shaders/URP_ShaderGraphCustomLighting/SubGraphs/Ambient SampleSH.shadersubgraph",
+      "guid": "e13fbf63d7907af4ab4988492ac7bca8",
+      "bytes": 13323
+    },
+    {
+      "path": "Assets/3DPixelArtEnvironment/Shaders/URP_ShaderGraphCustomLighting/SubGraphs/Main Light Shadows.shadersubgraph",
+      "guid": "f3ba9248037f69f429d9e52bc2e30940",
+      "bytes": 16495
+    },
+    {
+      "path": "Assets/3DPixelArtEnvironment/Shaders/URP_ShaderGraphCustomLighting/SubGraphs/Main Light.shadersubgraph",
+      "guid": "970d962ef25c3084987fd10643902eed",
+      "bytes": 7427
+    },
+    {
+      "path": "Assets/3DPixelArtEnvironment/Shaders/URP_ShaderGraphCustomLighting/SubGraphs/Mix Fog.shadersubgraph",
+      "guid": "aadfc52f8da612746841c7c5af3fcea6",
+      "bytes": 19981
+    },
+    {
+      "path": "Assets/逆向出来的物体/Dock.prefab",
+      "guid": "fa2805e06d0a5594aa925165befc8ded",
+      "bytes": 6044
+    },
+    {
+      "path": "Assets/逆向出来的物体/Material/Buildings.mat",
+      "guid": "59241703b9ad9a64e9ee854df8ba1539",
+      "bytes": 4912
+    },
+    {
+      "path": "Assets/逆向出来的物体/Material/Plants2.mat",
+      "guid": "3b94a61006ed57d459eb6bc8d1213012",
+      "bytes": 6270
+    },
+    {
+      "path": "Assets/逆向出来的物体/Mesh/Cube.059.asset",
+      "guid": "77d848fe4da2a4a47b9a841eedff7300",
+      "bytes": 315544
+    },
+    {
+      "path": "Assets/逆向出来的物体/Texture2D/BuildingTextureAtlas.png",
+      "guid": "6daa8c4863300d841b4211e42e9f489b",
+      "bytes": 32208242
+    },
+    {
+      "path": "Assets/逆向出来的物体/Texture2D/BuildingTextureAtlas_normal 1.png",
+      "guid": "7fe7549435c24ab4c8759ee19a188120",
+      "bytes": 9804847
+    },
+    {
+      "path": "Assets/逆向出来的物体/Texture2D/Emission.png",
+      "guid": "e5cff5bef6c03ca498fc7a940884fc46",
+      "bytes": 258298
+    },
+    {
+      "path": "Assets/逆向出来的物体/Texture2D/Emission_0.png",
+      "guid": "9c35b152f1bf14c4a847ea8ad6f816b3",
+      "bytes": 60997
+    },
+    {
+      "path": "Assets/逆向出来的物体/Texture2D/Plants.png",
+      "guid": "164d81514d9920b40802787712edad75",
+      "bytes": 2206117
+    }
+  ]
+}

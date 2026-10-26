@@ -1,0 +1,14 @@
+﻿Dock 桥 FBX（Blender 用）
+
+1. 将压缩包完整解压，保留 Dock_Bridge.fbx 旁的 Textures 文件夹。
+2. Blender：File > Import > FBX (.fbx)，选择 Dock_Bridge.fbx。
+3. 使用默认导入缩放；切到 Material Preview 查看贴图。
+4. 若植物边缘出现方块，将 Plants2 材质的图片 Alpha 接到 Principled BSDF 的 Alpha，启用材质透明显示。
+
+文件：FBX 2014 二进制；1 个桥网格；1520 个三角面；2 个材质槽；UV 与法线已保留。
+桥根节点已移至原点，原有子节点方向和尺寸保留。
+贴图路径均为相对路径，可随文件夹一起移动。
+
+Unity 的卡通 Shader Graph、场景灯光和碰撞体不属于可通用交换的 FBX 材质效果。
+这里导出的是可编辑网格、UV、基础材质与原始颜色贴图，卡通效果可在 Blender 中另行设置。
+已使用 Autodesk FBX SDK 回读验证；本机未检测到 Blender，未执行 Blender 内实测。

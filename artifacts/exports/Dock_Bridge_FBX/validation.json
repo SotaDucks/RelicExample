@@ -1,0 +1,17 @@
+{
+  "verified": true,
+  "reader": "Autodesk FBX SDK",
+  "meshes": [
+    {
+      "name": "Dock",
+      "controlPoints": 1947,
+      "polygons": 1520,
+      "uvCount": 2825,
+      "normalCount": 4560,
+      "materialSlots": 2,
+      "polygonMaterialCount": 1520
+    }
+  ],
+  "triangles": 1520,
+  "materialSlots": 2
+}

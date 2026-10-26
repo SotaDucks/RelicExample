@@ -1,0 +1,62 @@
+{
+  "source": "Assets/逆向出来的物体/Dock.prefab",
+  "format": "Binary FBX",
+  "origin": "Bridge root reset to origin; original child transforms preserved",
+  "unityVersion": "6000.3.7f1",
+  "meshes": [
+    {
+      "name": "Dock",
+      "vertices": 2825,
+      "triangles": 1520,
+      "subMeshes": 2
+    }
+  ],
+  "materials": [
+    {
+      "name": "Buildings",
+      "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "textures": [
+        {
+          "slot": "_MainTex",
+          "file": "Textures/BuildingTextureAtlas.png"
+        }
+      ]
+    },
+    {
+      "name": "Plants2",
+      "color": [
+        0.7169812,
+        0.7169812,
+        0.7169812,
+        1.0
+      ],
+      "textures": [
+        {
+          "slot": "_MainTex",
+          "file": "Textures/Plants.png"
+        }
+      ]
+    }
+  ],
+  "textureFiles": [
+    {
+      "source": "Assets/逆向出来的物体/Texture2D/BuildingTextureAtlas.png",
+      "relativePath": "Textures/BuildingTextureAtlas.png"
+    },
+    {
+      "source": "Assets/逆向出来的物体/Texture2D/Plants.png",
+      "relativePath": "Textures/Plants.png"
+    }
+  ],
+  "fbxVersion": 7400,
+  "relativeTexturePaths": [
+    "Textures/BuildingTextureAtlas.png",
+    "Textures/Plants.png"
+  ],
+  "texturePathFieldsPatched": 8
+}
