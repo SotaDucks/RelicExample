@@ -184,7 +184,7 @@ Material:
     - _Variation_Seed: 7.15
     - _Variation_Strength: 0.2
     - _Variation_Threshold: 0.2
-    - _Variation_Value: 0.3
+    - _Variation_Value: 0.635
     - _Wind_Density: 0.36
     - _Wind_Speed: 1
     - _Wind_Strength: 0.8
@@ -203,19 +203,19 @@ Material:
     - _Direction: {r: 0.5, g: 0.2, b: 0, a: 0}
     - _Distance: {r: 0.5, g: 2, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Emission_Color: {r: 0.61071545, g: 0.71302634, b: 0.8867924, a: 0}
+    - _Emission_Color: {r: 0.6037736, g: 0.16430645, b: 0.15379132, a: 0}
     - _InnerColor: {r: 0.2845319, g: 0.4339623, b: 0.3123329, a: 0}
-    - _Inner_Color: {r: 0.36765754, g: 0.509434, b: 0.39782274, a: 0}
+    - _Inner_Color: {r: 0.50980395, g: 0.37497276, b: 0.36862746, a: 0}
     - _Movement: {r: 0.6, g: 0.4, b: 0, a: 0}
     - _OuterColor: {r: 0.16126736, g: 0.2264151, b: 0.22247043, a: 0}
-    - _Outer_Color: {r: 0.23131008, g: 0.4339623, b: 0.3519927, a: 0}
+    - _Outer_Color: {r: 0.43529412, g: 0.23137255, b: 0.23832406, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Top_Color: {r: 0.90182036, g: 0.9685534, b: 0.89240927, a: 0}
     - _UP_Color: {r: 0.8962264, g: 0.5940857, b: 0.32551616, a: 0}
-    - _Variation_Color_A: {r: 0.5277234, g: 0.6320754, b: 0.57002825, a: 0}
-    - _Variation_Color_B: {r: 0.26352793, g: 0.36378902, b: 0.3962264, a: 0}
-    - _Variation_Color_C: {r: 0.35778213, g: 0.3372549, b: 0.47058824, a: 0}
-    - _Variation_Color_D: {r: 0.100302614, g: 0.12582552, b: 0.13207549, a: 0}
+    - _Variation_Color_A: {r: 0.78616345, g: 0.18037635, b: 0.10136064, a: 0}
+    - _Variation_Color_B: {r: 0.52201253, g: 0.083199844, b: 0.054171056, a: 0}
+    - _Variation_Color_C: {r: 0.3207547, g: 0.047407117, b: 0.055449624, a: 0}
+    - _Variation_Color_D: {r: 0.10062885, g: 0.07183254, b: 0.07344267, a: 0}
     - _Wind_Movement: {r: 0.6, g: 0.4, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
