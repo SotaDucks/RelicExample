@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7286894679160839485
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 10
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: M_Leaf_006
+  m_Shader: {fileID: -6465566751694194690, guid: 20d360642f7a3fd48b9509f622d23431, type: 3}
+  m_Parent: {fileID: 2100000, guid: 530df2eb483ccd643986740f97958c04, type: 2}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses:
+  - MOTIONVECTORS
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _Base_Map:
+        m_Texture: {fileID: 2800000, guid: 4dcc4798a6b75f44687ad682c2d06b62, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Basemap:
+        m_Texture: {fileID: 2800000, guid: 9a33d8da37846f44a8ab3f8a42d7b16d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _Alpha: 0
+    - _Bottom_Range: 0.43
+    - _Bottom_Range_Power: 0.21
+    - _Bottom_Value: 0.5
+    - _Contour_Range: 1.6
+    - _Emission_Strength: 0.411
+    - _Float: 0.2
+    - _Inner_Value: 1
+    - _Outer_Value: 1.8
+    - _Strength: 0.2
+    - _Top_Range: 0.07
+    - _Top_Range_Power: 0.31
+    - _Top_Value: 0.15
+    - _UV1: 1
+    - _UV1_Falloff: 0.076
+    - _Variation_Value: 0.2
+    - _Wind_Density: 0.6
+    - _Wind_Strength: 0.6
+    m_Colors:
+    - _Base_Color: {r: 0.6226415, g: 0.20759796, b: 0.0998575, a: 0}
+    - _Bottom_Color: {r: 0.053644687, g: 0.04509311, b: 0.25157225, a: 0}
+    - _Inner_Color: {r: 0.59119487, g: 0.033440467, b: 0.031604715, a: 0}
+    - _Outer_Color: {r: 0.49685526, g: 0.06099748, b: 0.0015623331, a: 0}
+    - _Top_Color: {r: 0.5660378, g: 0.1641949, b: 0.10145954, a: 0}
+    - _Variation_Color_A: {r: 0.496351, g: 0.6226415, b: 0.56946653, a: 0}
+    - _Variation_Color_B: {r: 0.6, g: 0.6296334, b: 0.6901961, a: 0}
+    - _Variation_Color_C: {r: 0.5735137, g: 0.6586864, b: 0.6792453, a: 0}
+    - _Variation_Color_D: {r: 0.5031446, g: 0.10786093, b: 0.061706353, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
