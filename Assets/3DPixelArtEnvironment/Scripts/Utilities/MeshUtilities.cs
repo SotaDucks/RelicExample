@@ -72,7 +72,11 @@ namespace Environment.Utilities
                 Vector3 a = vertices[triangles[i + 1]] - corner;
                 Vector3 b = vertices[triangles[i + 2]] - corner;
 
-                var normal = Vector3.Cross(a, b).normalized;
+                var normal = Vector3.Cross(a, b);
+                var length = normal.magnitude;
+                // Tiny triangles in scaled FBX models can fall below the cutoff
+                // used by Vector3.normalized even though their area is nonzero.
+                normal = length > 0f ? normal / length : Vector3.up;
                 normals[i / 3] = normal;
             }
 
@@ -95,14 +99,18 @@ namespace Environment.Utilities
             for (int i = 0; i < sampleAmount; i++)
             {
                 var random = Random.value;
-                for (int j = 0; j < weights.Length; j++)
+                // Find a triangle in the cumulative area distribution in O(log n).
+                // Large imported canopies otherwise require scanning thousands of
+                // triangles for every leaf.
+                var low = 0;
+                var high = weights.Length - 1;
+                while (low < high)
                 {
-                    if (random <= weights[j])
-                    {
-                        triangleIndices[i] = j;
-                        break;
-                    }
+                    var middle = low + (high - low) / 2;
+                    if (random > weights[middle]) low = middle + 1;
+                    else high = middle;
                 }
+                triangleIndices[i] = low;
             }
 
             return triangleIndices;

@@ -42,7 +42,8 @@ namespace Environment.Instancing
                 var instanceData = child.GetInstanceData();
                 if (instanceData == null)
                 {
-                    Debug.LogError("GetInstanceData should not return null.");
+                    Debug.LogWarning("Skipping an instance source with no generated data.", child);
+                    continue;
                 }
 
                 foreach (var (configuration, data) in instanceData)
