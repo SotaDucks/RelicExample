@@ -131,7 +131,7 @@ Material:
     - _GlossyReflections: 0
     - _Metallic: 0
     - _MinimumDarkness: 0.2
-    - _NormalEdgeStrength: 0.3
+    - _NormalEdgeStrength: 0.7
     - _NormalThreshold: 1
     - _OUTLINESENABLED: 1
     - _OcclusionStrength: 1
@@ -158,7 +158,7 @@ Material:
     - _DiffuseColor: {r: 0.7735849, g: 0.74435055, b: 0.71155214, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _NormalBias: {r: 1, g: 1, b: 1, a: 0}
-    - _Outline: {r: 0, g: 0, b: 0, a: 0}
+    - _Outline: {r: 1, g: 1, b: 1, a: 0}
     - _ShadowDiffuseColor: {r: 0.16736382, g: 0.15574937, b: 0.26415092, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
