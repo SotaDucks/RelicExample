@@ -29,3 +29,10 @@ git lfs pull
 工程源文件包含 `Assets`、`Packages` 和 `ProjectSettings`。`Library`、`Temp`、`Logs` 等本地生成目录由 Unity 在导入时生成。
 
 本次提交以磁盘上已保存的工程为准，未执行新的打包或运行测试。
+## 角色模型与光照资源更新（2026-11-03）
+
+- `Assets/场景/qy模型/人物_破面修复_绑骨_控制器对齐.fbx`：已绑定的人物模型。
+- `Assets/场景/qy模型/鹿妖_破面修复_绑定.fbx`：已绑定的鹿妖模型。
+- `Assets/场景/qy模型/textures/`：角色贴图和材质。
+- `Assets/场景/qy模型/场景/`：迁移后的光照与反射探针文件，保留原有 Unity GUID。
+- 主要检查入口仍为 `Assets/场景/ZQY.unity`。
