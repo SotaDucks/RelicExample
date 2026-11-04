@@ -72,6 +72,10 @@ public sealed class KaoruThrowingKnife : MonoBehaviour
     [Tooltip("Follow the hit object if it has a Rigidbody (e.g. a moving enemy).")]
     public bool stickToMovingTargets = true;
 
+    [Header("Damage")]
+    [Tooltip("对命中目标的 KaoruHealth 造成的伤害。同一把飞刀对同一目标最多扣血一次。")]
+    [Min(1)] public int damage = 1;
+
     [Header("Lifetime")]
     [Tooltip("Seconds after launch before an unstuck knife (flying, bounced or lying around) is removed.")]
     [Min(0.1f)] public float lifetime = 4f;
@@ -94,6 +98,7 @@ public sealed class KaoruThrowingKnife : MonoBehaviour
     private float despawnTime = float.PositiveInfinity;
     private bool launched;
     private bool stuck;
+    private readonly HashSet<KaoruHealth> damagedTargets = new HashSet<KaoruHealth>();
 
     private void Awake()
     {
@@ -115,6 +120,7 @@ public sealed class KaoruThrowingKnife : MonoBehaviour
             direction = transform.forward;
         direction.Normalize();
         Thrower = thrower;
+        damagedTargets.Clear();
         if (ignoredColliders != null)
             foreach (Collider own in colliders)
                 foreach (Collider other in ignoredColliders)
@@ -193,6 +199,7 @@ public sealed class KaoruThrowingKnife : MonoBehaviour
     {
         if (!launched || stuck)
             return;
+        ApplyDamage(collision.collider);
         Hit?.Invoke(this, collision);
         if (this == null)
             return;
@@ -206,6 +213,19 @@ public sealed class KaoruThrowingKnife : MonoBehaviour
                     Stick(collision, contact);
                 break;
         }
+    }
+
+    private void ApplyDamage(Collider targetCollider)
+    {
+        KaoruHealth targetHealth = targetCollider.GetComponentInParent<KaoruHealth>();
+        if (targetHealth == null || targetHealth.IsDead || damage <= 0)
+            return;
+        if (Thrower != null && (targetHealth.transform.IsChildOf(Thrower.transform) ||
+            Thrower.transform.IsChildOf(targetHealth.transform)))
+            return;
+        // Record before invoking damage callbacks, including compound-collider hits.
+        if (damagedTargets.Add(targetHealth))
+            targetHealth.TakeDamage(damage, Thrower);
     }
 
     private bool CanStick(Collision collision, out ContactPoint contact)
