@@ -117,6 +117,7 @@ public sealed class KaoruTopDownController : MonoBehaviour
         walkingBack = false;
         // Activation resets to the graph's default. No gameplay Play/CrossFade.
         characterAnimator.Rebind();
+        characterAnimator.SetLayerWeight(upperBodyLayer, 0f);
         characterAnimator.SetBool(MovingParameter, false);
         characterAnimator.SetFloat(TurnParameter, 0f);
         characterAnimator.SetFloat(AttackSpeedParameter, attackSpeed);
@@ -148,6 +149,7 @@ public sealed class KaoruTopDownController : MonoBehaviour
         if (attackHeld && !IsAttacking)
             RequestAttack();
         bool attacking = IsAttacking;
+        UpdateUpperBodyLayerWeight(attacking);
         // Keep tracking the cursor for the whole combo, like a twin-stick aim.
         if (attacking && faceMouseWhenAttacking && mouse != null)
             AimAt(mouse.position.ReadValue());
@@ -207,7 +209,21 @@ public sealed class KaoruTopDownController : MonoBehaviour
         targetTurn = 0f;
         characterAnimator.SetFloat(TurnParameter, 0f);
         characterAnimator.SetBool(AimingParameter, true);
+        // Enable the layer before its trigger so a zero-weight layer can enter the attack.
+        characterAnimator.SetLayerWeight(upperBodyLayer, 1f);
         characterAnimator.SetTrigger(AttackParameter);
+    }
+
+    private void UpdateUpperBodyLayerWeight(bool attacking)
+    {
+        float weight = attacking ? 1f : 0f;
+        // Use the existing exit blend to return the upper body to the base pose.
+        if (attacking && characterAnimator.IsInTransition(upperBodyLayer) &&
+            characterAnimator.GetCurrentAnimatorStateInfo(upperBodyLayer).IsTag(AttackTag) &&
+            !characterAnimator.GetNextAnimatorStateInfo(upperBodyLayer).IsTag(AttackTag))
+            weight = 1f - Mathf.Clamp01(
+                characterAnimator.GetAnimatorTransitionInfo(upperBodyLayer).normalizedTime);
+        characterAnimator.SetLayerWeight(upperBodyLayer, weight);
     }
 
     private void AimAt(Vector2 screenPosition)
@@ -284,6 +300,7 @@ public sealed class KaoruTopDownController : MonoBehaviour
         walkingBack = false;
         if (ready && characterAnimator != null && characterAnimator.isInitialized)
         {
+            characterAnimator.SetLayerWeight(upperBodyLayer, 0f);
             characterAnimator.ResetTrigger(AttackParameter);
             characterAnimator.SetBool(MovingParameter, false);
             characterAnimator.SetBool(AimingParameter, false);

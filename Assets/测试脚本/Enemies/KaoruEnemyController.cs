@@ -1,6 +1,6 @@
 using UnityEngine;
 
-/// <summary>Ground-plane melee enemy. The five plain C# states own its behaviour.</summary>
+/// <summary>Ground-plane melee enemy. Plain C# states own its behaviour.</summary>
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider), typeof(KaoruHealth))]
 [AddComponentMenu("Kaoru/Enemy Controller")]
@@ -37,6 +37,14 @@ public sealed class KaoruEnemyController : MonoBehaviour
     [Min(0f)] [SerializeField] private float attackCooldown = 0.8f;
     [Min(1)] [SerializeField] private int attackDamage = 1;
 
+    [Header("Dodge")]
+    [Tooltip("每次非致命命中后触发闪避的概率；每只小怪一生最多成功触发一次，仍正常扣血。")]
+    [Range(0f, 1f)] [SerializeField] private float dodgeChance = 0.3f;
+    [Tooltip("闪避时向身体左侧移动的速度，使用 Rigidbody 保留与墙体的碰撞。")]
+    [Min(0f)] [SerializeField] private float dodgeSpeed = 4f;
+    [Tooltip("闪避动画播放到此进度后停止位移，剩余部分作为动作收尾。")]
+    [Range(0f, 1f)] [SerializeField] private float dodgeMoveEndTime = 0.85f;
+
     [Header("Animator state names (Base Layer)")]
     [Tooltip("填写状态名或完整路径，例如 Idle 或 Base Layer.Idle。无需参数和过渡连线。")]
     [SerializeField] private string idleState = "Idle";
@@ -44,6 +52,7 @@ public sealed class KaoruEnemyController : MonoBehaviour
     [SerializeField] private string attackState = "Attack";
     [SerializeField] private string hitState = "Hit";
     [SerializeField] private string deathState = "Death";
+    [SerializeField] private string dodgeState = "小怪闪避";
     [Min(0f)] [SerializeField] private float animationBlendTime = 0.08f;
 
     [Header("Death")]
@@ -57,30 +66,34 @@ public sealed class KaoruEnemyController : MonoBehaviour
     private Transform cachedTarget;
     private KaoruEnemyStateMachine stateMachine;
     private KaoruEnemyStateBase[] states;
-    private readonly int[] animationHashes = new int[5];
+    private readonly int[] animationHashes = new int[6];
     private int requestedAnimationHash;
     private int animationRequestFrame;
     private float nextAttackTime;
     private float nextTargetSearchTime;
     private bool ready;
     private bool warnedMissingTargetHealth;
+    private bool hasDodged;
 
     public KaoruEnemyState CurrentState => stateMachine != null && stateMachine.Current != null
         ? stateMachine.Current.Id : KaoruEnemyState.Idle;
     public Transform Target => target;
     public KaoruHealth Health => health;
     public bool IsDead => health != null && health.IsDead;
+    public bool HasDodged => hasDodged;
 
     internal float DetectionRadius => detectionRadius;
     internal float LoseTargetRadius => loseTargetRadius;
     internal float AttackRange => attackRange;
     internal float AttackExitRange => attackExitRange;
     internal float AttackHitTime => attackHitTime;
+    internal float DodgeMoveEndTime => dodgeMoveEndTime;
     internal float CorpseLifetime => corpseLifetime;
     internal bool DespawnAfterDeath => despawnAfterDeath;
     internal bool CanAttack => Time.time >= nextAttackTime;
     internal bool IsReturningFromMelee => stateMachine.Previous != null &&
-        (stateMachine.Previous.Id == KaoruEnemyState.Attack || stateMachine.Previous.Id == KaoruEnemyState.Hit);
+        (stateMachine.Previous.Id == KaoruEnemyState.Attack || stateMachine.Previous.Id == KaoruEnemyState.Hit ||
+         stateMachine.Previous.Id == KaoruEnemyState.Dodge);
 
     private bool HasTarget => target != null && target != transform &&
         target.gameObject.activeInHierarchy && (targetHealth == null || !targetHealth.IsDead);
@@ -94,7 +107,7 @@ public sealed class KaoruEnemyController : MonoBehaviour
         {
             new KaoruEnemyIdleState(this), new KaoruEnemyChaseState(this),
             new KaoruEnemyAttackState(this), new KaoruEnemyHitState(this),
-            new KaoruEnemyDeathState(this)
+            new KaoruEnemyDeathState(this), new KaoruEnemyDodgeState(this)
         };
     }
 
@@ -213,6 +226,17 @@ public sealed class KaoruEnemyController : MonoBehaviour
             body.linearVelocity = Vector3.up * body.linearVelocity.y;
     }
 
+    internal Vector3 GetDodgeDirection()
+    {
+        return Vector3.ProjectOnPlane(body.rotation * Vector3.left, Vector3.up).normalized;
+    }
+
+    internal void MoveForDodge(Vector3 direction)
+    {
+        if (!body.isKinematic)
+            body.linearVelocity = direction * dodgeSpeed + Vector3.up * body.linearVelocity.y;
+    }
+
     internal void FaceTarget()
     {
         if (!HasTarget || body.isKinematic)
@@ -251,6 +275,17 @@ public sealed class KaoruEnemyController : MonoBehaviour
             return;
         if (source != null && source != gameObject)
             SetTarget(source.transform);
+        // Damage was already applied by KaoruHealth. Further nonlethal hits
+        // neither restart the dodge nor grant another roll of the probability.
+        if (CurrentState == KaoruEnemyState.Dodge)
+            return;
+        if (!hasDodged && dodgeChance > 0f &&
+            (dodgeChance >= 1f || Random.value < dodgeChance))
+        {
+            hasDodged = true;
+            ChangeState(KaoruEnemyState.Dodge);
+            return;
+        }
         ChangeState(KaoruEnemyState.Hit, true);
     }
 
@@ -277,13 +312,15 @@ public sealed class KaoruEnemyController : MonoBehaviour
         if (characterAnimator == null || !characterAnimator.isActiveAndEnabled ||
             characterAnimator.runtimeAnimatorController == null || characterAnimator.layerCount == 0)
         {
-            Debug.LogError("请给小怪指定已启用的 Animator 和包含五个动画状态的 Controller。", this);
+            Debug.LogError("请给小怪指定已启用的 Animator 和包含六个动画状态的 Controller。", this);
             return false;
         }
         string layer = characterAnimator.GetLayerName(0) + ".";
-        string[] names = { idleState, runState, attackState, hitState, deathState };
+        string[] names = { idleState, runState, attackState, hitState, deathState, dodgeState };
         for (int i = 0; i < names.Length; i++)
         {
+            if (i == (int)KaoruEnemyState.Dodge && dodgeChance <= 0f)
+                continue;
             string name = names[i] != null ? names[i].Trim() : string.Empty;
             string path = name.StartsWith(layer, System.StringComparison.Ordinal) ? name : layer + name;
             animationHashes[i] = Animator.StringToHash(path);
@@ -344,6 +381,9 @@ public sealed class KaoruEnemyController : MonoBehaviour
         attackHitRange = Mathf.Max(attackRange, attackHitRange);
         detectionRadius = Mathf.Max(attackExitRange, detectionRadius);
         loseTargetRadius = Mathf.Max(detectionRadius, loseTargetRadius);
+        dodgeChance = Mathf.Clamp01(dodgeChance);
+        dodgeSpeed = Mathf.Max(0f, dodgeSpeed);
+        dodgeMoveEndTime = Mathf.Clamp01(dodgeMoveEndTime);
     }
 
     private void OnDrawGizmosSelected()

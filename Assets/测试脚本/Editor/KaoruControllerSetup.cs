@@ -105,10 +105,10 @@ public static class KaoruControllerSetup
         controller.layers = new[]
         {
             new AnimatorControllerLayer { name = "Base Layer", defaultWeight = 1f, stateMachine = machine },
-            // Arms, spine and head override the legs, which keep walking below.
+            // The player controller enables this layer only during knife attacks.
             new AnimatorControllerLayer
             {
-                name = KaoruTopDownController.UpperBodyLayerName, defaultWeight = 1f,
+                name = KaoruTopDownController.UpperBodyLayerName, defaultWeight = 0f,
                 blendingMode = AnimatorLayerBlendingMode.Override, avatarMask = upperBodyMask,
                 stateMachine = upperMachine
             }
@@ -153,7 +153,7 @@ public static class KaoruControllerSetup
             foreach (AnimatorStateTransition transition in state.transitions)
                 transition.interruptionSource = TransitionInterruptionSource.SourceThenDestination;
 
-        // Upper body: an empty state leaves the base pose untouched; one click
+        // The controller mutes Empty; one click enables the upper layer and
         // plays AttackA1 then AttackA2 back to back, uninterruptible. While the
         // button is held, AttackA2 loops straight back into AttackA1.
         emptyState.motion = null;

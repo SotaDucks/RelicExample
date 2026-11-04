@@ -5,7 +5,8 @@ public enum KaoruEnemyState
     Chase,
     Attack,
     Hit,
-    Death
+    Death,
+    Dodge
 }
 
 public abstract class KaoruEnemyStateBase
