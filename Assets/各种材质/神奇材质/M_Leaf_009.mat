@@ -122,7 +122,7 @@ Material:
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
-    - _Contour_Range: 0.6
+    - _Contour_Range: 1.19
     - _Cull: 2
     - _Cutoff: 0.5
     - _Dark: 0
@@ -133,7 +133,7 @@ Material:
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _Emission: 0.5
-    - _Emission_Strength: 0.5
+    - _Emission_Strength: 0.27
     - _EnvironmentReflections: 1
     - _Float: 0.2
     - _GlossMapScale: 0
@@ -142,12 +142,12 @@ Material:
     - _Greyscale: 1
     - _Greyscale_Map: 1
     - _InnerValue: 1.13
-    - _Inner_Value: 1
+    - _Inner_Value: 3.8
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Offset: 0.2
     - _OuterValue: 0.34
-    - _Outer_Value: 2.19
+    - _Outer_Value: 2.11
     - _Parallax: 0.005
     - _Pix: 0
     - _Pix_Intensity: 9.81
@@ -180,9 +180,9 @@ Material:
     - _Variation_Seed: 7.15
     - _Variation_Strength: 0.2
     - _Variation_Threshold: 0.2
-    - _Variation_Value: 0.2
+    - _Variation_Value: 1
     - _Wind_Density: 0.6
-    - _Wind_Speed: 1
+    - _Wind_Speed: 0.76
     - _Wind_Strength: 0.3
     - _WorkflowMode: 1
     - _ZWrite: 1
@@ -190,7 +190,7 @@ Material:
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Base_Color: {r: 0.55345905, g: 0.19415048, b: 0.064396076, a: 0}
-    - _Bottom_Color: {r: 0.43174705, g: 0.49382532, b: 0.74213827, a: 0}
+    - _Bottom_Color: {r: 0.5283019, g: 0.041347478, b: 0, a: 0}
     - _Color: {r: 0.33107868, g: 0.4528302, b: 0.3995639, a: 1}
     - _Color_1: {r: 0.49056602, g: 0.34467864, b: 0.039337847, a: 0}
     - _Color_2: {r: 0, g: 0.071496055, b: 0.025985042, a: 0}
@@ -201,16 +201,16 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Emission_Color: {r: 0, g: 0, b: 0, a: 0}
     - _InnerColor: {r: 0.2845319, g: 0.4339623, b: 0.3123329, a: 0}
-    - _Inner_Color: {r: 0.20754719, g: 0.009789935, b: 0.013000783, a: 0}
+    - _Inner_Color: {r: 0.6037736, g: 0.3097332, b: 0.039871756, a: 0}
     - _Movement: {r: 0.6, g: 0.4, b: 0, a: 0}
     - _OuterColor: {r: 0.16126736, g: 0.2264151, b: 0.22247043, a: 0}
-    - _Outer_Color: {r: 0.3018868, g: 0.052363645, b: 0.027530527, a: 0}
+    - _Outer_Color: {r: 0.836478, g: 0.07169811, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _Top_Color: {r: 0.408805, g: 0.096531615, b: 0.019283203, a: 0}
+    - _Top_Color: {r: 0.6855345, g: 0.20585805, b: 0.0840749, a: 0}
     - _UP_Color: {r: 0.8962264, g: 0.5940857, b: 0.32551616, a: 0}
-    - _Variation_Color_A: {r: 0.6037736, g: 0.06265569, b: 0.15043738, a: 0}
-    - _Variation_Color_B: {r: 0.5031446, g: 0, b: 0.0050070896, a: 0}
-    - _Variation_Color_C: {r: 0.69182384, g: 0.39082024, b: 0.20667687, a: 0}
-    - _Variation_Color_D: {r: 0.746262, g: 0.75901383, b: 0.8113208, a: 0}
+    - _Variation_Color_A: {r: 0.18238991, g: 0.018927235, b: 0.044986457, a: 0}
+    - _Variation_Color_B: {r: 0.106918216, g: 0.009077945, b: 0.009842322, a: 0}
+    - _Variation_Color_C: {r: 0.17610055, g: 0.092268854, b: 0.040425573, a: 0}
+    - _Variation_Color_D: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

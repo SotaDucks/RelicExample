@@ -111,18 +111,18 @@ Material:
     - _AlphaClip: 0
     - _AlphaToMask: 0
     - _Alpha_Channel: 1
-    - _Alpha_Clip: 0.45
+    - _Alpha_Clip: 0.4
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _Bottom_Power: 1
     - _Bottom_Range: 0.73
-    - _Bottom_Range_Power: 0.4
-    - _Bottom_Value: 0.7
+    - _Bottom_Range_Power: 0
+    - _Bottom_Value: 0.22
     - _Branch: -0.113
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
-    - _Contour_Range: 0.6
+    - _Contour_Range: 0.67
     - _Cull: 2
     - _Cutoff: 0.5
     - _Dark: 0
@@ -133,7 +133,7 @@ Material:
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _Emission: 0.5
-    - _Emission_Strength: 0.548
+    - _Emission_Strength: 0.33
     - _EnvironmentReflections: 1
     - _Float: 0.2
     - _Float_1: 0
@@ -144,12 +144,12 @@ Material:
     - _Greyscale_Map: 1
     - _Hardness: 0
     - _InnerValue: 1.13
-    - _Inner_Value: 1
+    - _Inner_Value: 1.35
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Offset: 0.2
     - _OuterValue: 0.34
-    - _Outer_Value: 1.3
+    - _Outer_Value: 1.69
     - _POWER: 0
     - _Parallax: 0.005
     - _Pix: 0
@@ -170,8 +170,8 @@ Material:
     - _Surface: 0
     - _Top_Power: 1
     - _Top_Range: 0.04
-    - _Top_Range_Power: 2.23
-    - _Top_Value: 0.237
+    - _Top_Range_Power: 3.8
+    - _Top_Value: 0.38
     - _UP: -5.38
     - _UV1: 0
     - _UV1_Falloff: 0
@@ -185,7 +185,7 @@ Material:
     - _Variation_Seed: 7.15
     - _Variation_Strength: 0.2
     - _Variation_Threshold: 0.2
-    - _Variation_Value: 0.4
+    - _Variation_Value: 0.11
     - _Wind_Density: 0.6
     - _Wind_Speed: 1
     - _Wind_Strength: 0.3
@@ -195,8 +195,8 @@ Material:
     - _up: 0.878
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Base_Color: {r: 0.35507926, g: 0.35686275, b: 0.32156864, a: 0}
-    - _Bottom_Color: {r: 0.2666981, g: 0.23529412, b: 0.30980393, a: 0}
+    - _Base_Color: {r: 0.509434, g: 0.09097035, b: 0, a: 0}
+    - _Bottom_Color: {r: 0.6289307, g: 0.16581923, b: 0.08504397, a: 0}
     - _Color: {r: 0.33107868, g: 0.4528302, b: 0.3995639, a: 1}
     - _Color_1: {r: 0.49056602, g: 0.34467864, b: 0.039337847, a: 0}
     - _Color_2: {r: 0, g: 0.071496055, b: 0.025985042, a: 0}
@@ -207,16 +207,16 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Emission_Color: {r: 0, g: 0, b: 0, a: 0}
     - _InnerColor: {r: 0.2845319, g: 0.4339623, b: 0.3123329, a: 0}
-    - _Inner_Color: {r: 0.3584906, g: 0.21687753, b: 0.1927732, a: 0}
+    - _Inner_Color: {r: 0.51572317, g: 0.06796351, b: 0, a: 0}
     - _Movement: {r: 0.6, g: 0.4, b: 0, a: 0}
     - _OuterColor: {r: 0.16126736, g: 0.2264151, b: 0.22247043, a: 0}
-    - _Outer_Color: {r: 0.24528301, g: 0.026996529, b: 0.07528972, a: 0}
+    - _Outer_Color: {r: 0.16352195, g: 0, b: 0.021598304, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _Top_Color: {r: 0.6901961, g: 0.60784316, b: 0.68111753, a: 0}
+    - _Top_Color: {r: 0.8616352, g: 0.3823199, b: 0.14902481, a: 0}
     - _UP_Color: {r: 0.8962264, g: 0.5940857, b: 0.32551616, a: 0}
-    - _Variation_Color_A: {r: 0.6320754, g: 0.45175505, b: 0.39057493, a: 0}
-    - _Variation_Color_B: {r: 0.5283019, g: 0.44606623, b: 0.48857576, a: 0}
-    - _Variation_Color_C: {r: 0.23270428, g: 0.066591434, b: 0.14081204, a: 0}
-    - _Variation_Color_D: {r: 0.6981132, g: 0.5367569, b: 0.5457211, a: 0}
+    - _Variation_Color_A: {r: 0.8616352, g: 0.2625944, b: 0.07315757, a: 0}
+    - _Variation_Color_B: {r: 0.9308176, g: 0.5415133, b: 0.74606293, a: 0}
+    - _Variation_Color_C: {r: 0.66666657, g: 0.16930966, b: 0.07337517, a: 0}
+    - _Variation_Color_D: {r: 0.6415094, g: 0.12709141, b: 0.15416618, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

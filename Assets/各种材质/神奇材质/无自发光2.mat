@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7286894679160839485
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 10
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "\u65E0\u81EA\u53D1\u51492"
+  m_Shader: {fileID: -6465566751694194690, guid: 20d360642f7a3fd48b9509f622d23431, type: 3}
+  m_Parent: {fileID: 2100000, guid: cf75274e2ffe2c540a2763e867e85cfb, type: 2}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses:
+  - MOTIONVECTORS
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _Base_Map:
+        m_Texture: {fileID: 2800000, guid: 69c4a3756973e2743badbb90150e2f6b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _Bottom_Range: 0.83
+    - _Bottom_Range_Power: 0.65
+    - _Bottom_Value: 0.451
+    - _Contour_Range: 0
+    - _Emission_Strength: 0
+    - _Inner_Value: 0
+    - _Outer_Value: 0
+    - _Top_Range: 0
+    - _Top_Range_Power: 3.54
+    - _Top_Value: 0.241
+    - _Variation_Value: 0.3
+    - _Wind_Strength: 0.2
+    m_Colors:
+    - _Base_Color: {r: 1, g: 0.17924517, b: 0.19351909, a: 0}
+    - _Bottom_Color: {r: 0.13216446, g: 0.15098788, b: 0.16981131, a: 0}
+    - _Emission_Color: {r: 0, g: 0, b: 0, a: 0}
+    - _Inner_Color: {r: 0.34509805, g: 0.09411764, b: 0.16213414, a: 0}
+    - _Outer_Color: {r: 0.34591186, g: 0.09681179, b: 0.18718639, a: 0}
+    - _Top_Color: {r: 0.47798735, g: 0.12844297, b: 0.052608617, a: 0}
+    - _Variation_Color_A: {r: 0.52201253, g: 0.08371891, b: 0.13156386, a: 0}
+    - _Variation_Color_B: {r: 0.4716981, g: 0.040049765, b: 0.056119833, a: 0}
+    - _Variation_Color_C: {r: 0.35778213, g: 0.3372549, b: 0.47058824, a: 0}
+    - _Variation_Color_D: {r: 0.57861626, g: 0.09646247, b: 0.027293148, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

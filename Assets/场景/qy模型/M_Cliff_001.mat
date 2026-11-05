@@ -116,8 +116,8 @@ Material:
     - _power: 2
     - _vertex: 0.71
     m_Colors:
-    - _Color: {r: 0.19465204, g: 0.2195942, b: 0.23899364, a: 0}
+    - _Color: {r: 0.51317185, g: 0.5832751, b: 0.5849056, a: 0}
     - _Emission_Color: {r: 0, g: 0, b: 0, a: 0}
-    - _Grass_Color: {r: 0.18867922, g: 0.159606, b: 0.16773379, a: 0}
+    - _Grass_Color: {r: 0.59748423, g: 0.5805743, b: 0.58540565, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
