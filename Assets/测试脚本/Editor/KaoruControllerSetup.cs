@@ -16,6 +16,7 @@ public static class KaoruControllerSetup
     private const string UpperBodyMaskPath = "Assets/测试脚本/KaoruUpperBody.mask";
     private const string KnifePrefabPath = "Assets/道具/飞刀.prefab";
     private const string AnimationFolder = "Assets/测试女角色/Animations/AnimationsWing/";
+    private const string CharacterAnimationFolder = "Assets/新角色/测试主角/";
 
     [MenuItem("Tools/Kaoru/Configure Selected Character")]
     public static void ConfigureSelectedCharacter()
@@ -38,10 +39,8 @@ public static class KaoruControllerSetup
     {
         if (EditorApplication.isPlayingOrWillChangePlaymode)
             throw new InvalidOperationException("请先退出 Play 模式再配置 Kaoru。");
-        AnimationClip idle = LoadClip("Idle_A");
-        AnimationClip run = LoadClip("RunA");
-        AnimationClip runLeft = LoadClip("RunA_L");
-        AnimationClip runRight = LoadClip("RunA_R");
+        AnimationClip idle = LoadCharacterClip("主角Idle");
+        AnimationClip run = LoadCharacterClip("主角奔跑");
         AnimationClip walk = LoadClip("Walk");
         AnimationClip walkBack = LoadClip("Walk_back");
         AnimationClip attack = LoadAttackClip(AttackPath, "Atk_A1", "KaoruAttack");
@@ -61,7 +60,6 @@ public static class KaoruControllerSetup
         AnimatorState emptyState = GetOrCreateState(upperMachine, "Empty");
         AnimatorState attackState = GetOrCreateState(upperMachine, "AttackA1");
         AnimatorState followState = GetOrCreateState(upperMachine, "AttackA2");
-        BlendTree runBlend = GetOrCreateBlendTree(controller, runState);
         BlendTree walkBlend = GetOrCreateBlendTree(controller, walkState);
         AnimatorState[] baseStates = { idleState, runState, walkState };
         AnimatorState[] upperStates = { emptyState, attackState, followState };
@@ -90,7 +88,7 @@ public static class KaoruControllerSetup
         };
         // The old single-layer AttackA1 lived in Base Layer; it is not retained.
         Object[] retained = { controller, machine, upperMachine, idleState, runState, walkState,
-            emptyState, attackState, followState, runBlend, walkBlend };
+            emptyState, attackState, followState, walkBlend };
         foreach (Object asset in AssetDatabase.LoadAllAssetsAtPath(ControllerPath))
             if (!retained.Contains(asset))
                 Object.DestroyImmediate(asset, true);
@@ -107,10 +105,10 @@ public static class KaoruControllerSetup
         controller.layers = new[]
         {
             new AnimatorControllerLayer { name = "Base Layer", defaultWeight = 1f, stateMachine = machine },
-            // Arms, spine and head override the legs, which keep walking below.
+            // The player controller enables this layer only during knife attacks.
             new AnimatorControllerLayer
             {
-                name = KaoruTopDownController.UpperBodyLayerName, defaultWeight = 1f,
+                name = KaoruTopDownController.UpperBodyLayerName, defaultWeight = 0f,
                 blendingMode = AnimatorLayerBlendingMode.Override, avatarMask = upperBodyMask,
                 stateMachine = upperMachine
             }
@@ -123,17 +121,7 @@ public static class KaoruControllerSetup
 
         idleState.motion = idle;
         machine.defaultState = idleState;
-        runBlend.name = "RunA Left - Straight - Right";
-        runBlend.blendType = BlendTreeType.Simple1D;
-        runBlend.blendParameter = KaoruTopDownController.TurnParameterName;
-        runBlend.useAutomaticThresholds = false;
-        runBlend.children = new[]
-        {
-            new ChildMotion { motion = runLeft, threshold = -1f, timeScale = 1f },
-            new ChildMotion { motion = run, threshold = 0f, timeScale = 1f },
-            new ChildMotion { motion = runRight, threshold = 1f, timeScale = 1f }
-        };
-        runState.motion = runBlend;
+        runState.motion = run;
         walkBlend.name = "Walk - Walk_back";
         walkBlend.blendType = BlendTreeType.Simple1D;
         walkBlend.blendParameter = KaoruTopDownController.WalkBackParameterName;
@@ -165,7 +153,7 @@ public static class KaoruControllerSetup
             foreach (AnimatorStateTransition transition in state.transitions)
                 transition.interruptionSource = TransitionInterruptionSource.SourceThenDestination;
 
-        // Upper body: an empty state leaves the base pose untouched; one click
+        // The controller mutes Empty; one click enables the upper layer and
         // plays AttackA1 then AttackA2 back to back, uninterruptible. While the
         // button is held, AttackA2 loops straight back into AttackA1.
         emptyState.motion = null;
@@ -217,6 +205,15 @@ public static class KaoruControllerSetup
             knife = AssetDatabase.LoadAssetAtPath<GameObject>(KnifePrefabPath).GetComponent<KaoruThrowingKnife>();
         }
         return knife;
+    }
+
+    private static AnimationClip LoadCharacterClip(string name)
+    {
+        string path = CharacterAnimationFolder + name + ".anim";
+        AnimationClip clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(path);
+        if (clip == null)
+            throw new InvalidOperationException("找不到主角动画：" + path);
+        return clip;
     }
 
     private static AnimationClip LoadAttackClip(string path, string sourceName, string clipName)
