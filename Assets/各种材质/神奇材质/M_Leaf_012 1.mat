@@ -51,7 +51,7 @@ Material:
     - _Bottom_Range: 0.52
     - _Bottom_Range_Power: 0.51
     - _Bottom_Value: 0.7
-    - _Emission_Strength: 0.022
+    - _Emission_Strength: 0
     - _Float: 0.31
     - _Strength: 0.1
     - _Top_Range: 0.07

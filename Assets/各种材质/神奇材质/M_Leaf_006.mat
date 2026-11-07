@@ -52,11 +52,11 @@ Material:
     - _Bottom_Range: 0.43
     - _Bottom_Range_Power: 0.21
     - _Bottom_Value: 0.5
-    - _Contour_Range: 1.32
-    - _Emission_Strength: 0.23
+    - _Contour_Range: 0
+    - _Emission_Strength: 0
     - _Float: 0.2
     - _Inner_Value: 4.3
-    - _Outer_Value: 1.73
+    - _Outer_Value: 0
     - _Strength: 0.2
     - _Top_Range: 0.07
     - _Top_Range_Power: 0.31

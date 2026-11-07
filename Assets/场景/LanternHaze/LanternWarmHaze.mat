@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: LanternWarmHaze
   m_Shader: {fileID: 4800000, guid: 055042051dbea2d448decf14be7da988, type: 3}
-  m_Parent: {fileID: 0}
+  m_Parent: {fileID: 2100000, guid: 6a7500f83c372a3409e81e68b5faaaba, type: 2}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -24,9 +24,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Ints: []
-    m_Floats:
-    - _Density: 0.065
-    m_Colors:
-    - _FogColor: {r: 1, g: 0.729739, b: 0.39999998, a: 1}
+    m_Floats: []
+    m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1
