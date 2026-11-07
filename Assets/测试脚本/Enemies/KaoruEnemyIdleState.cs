@@ -14,7 +14,7 @@ public sealed class KaoruEnemyIdleState : KaoruEnemyStateBase
 
     public override void Tick()
     {
-        if (!Enemy.TargetIsWithin(Enemy.DetectionRadius))
+        if (!Enemy.TargetIsWithinPursuitRange(Enemy.DetectionRadius))
             return;
         if (!Enemy.TargetIsWithin(engagementRange))
             Enemy.ChangeState(KaoruEnemyState.Chase);
