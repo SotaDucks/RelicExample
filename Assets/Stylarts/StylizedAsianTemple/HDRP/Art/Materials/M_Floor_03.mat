@@ -201,6 +201,7 @@ Material:
     - _DoubleSidedGIMode: 0
     - _DoubleSidedNormalMode: 2
     - _DstBlend: 0
+    - _DstBlendAlpha: 0
     - _EnableBlendModePreserveSpecularLighting: 1
     - _EnableFogOnTransparent: 1
     - _Mask_Brightness: 2
@@ -225,6 +226,7 @@ Material:
     - _Second_Base_Color_Uv_Tiling: 6
     - _Smoothness_Intensity: 20
     - _SrcBlend: 1
+    - _SrcBlendAlpha: 1
     - _StencilRef: 0
     - _StencilRefDepth: 8
     - _StencilRefDistortionVec: 4
@@ -264,7 +266,7 @@ Material:
     - Color_AF14EE56: {r: 1, g: 1, b: 1, a: 0}
     - Color_f6973748622e48d389fed870a51f8d37: {r: 0.03301889, g: 0.5105501, b: 1, a: 0}
     - Vector2_a2eabf39adb94f15b288ca76d631bb9d: {r: 0, g: 0, b: 0, a: 0}
-    - _Base_Color_Tint: {r: 0.6792453, g: 0.49661803, b: 0.49661803, a: 0}
+    - _Base_Color_Tint: {r: 0.9924528, g: 0.8445211, b: 0.8445211, a: 0}
     - _DoubleSidedConstants: {r: 1, g: 1, b: 1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
     - _Mask_Color_Tint: {r: 1, g: 0.76640606, b: 0, a: 0}

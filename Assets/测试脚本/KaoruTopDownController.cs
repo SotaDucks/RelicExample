@@ -44,6 +44,17 @@ public sealed class KaoruTopDownController : MonoBehaviour
     [Range(5f, 180f)] [SerializeField] private float fullTurnAnimationAngle = 45f;
     [Min(0f)] [SerializeField] private float turnAnimationDamping = 0.1f;
 
+    [Header("Ground Movement")]
+    [Tooltip("Layers that can support the character or be stepped onto.")]
+    [SerializeField] private LayerMask walkableLayers = Physics.AllLayers;
+    [Range(0f, 75f)] [SerializeField] private float maxGroundSlope = KaoruGroundMotor.DefaultMaxGroundSlope;
+    [Tooltip("Maximum step height in world meters.")]
+    [Min(0f)] [SerializeField] private float maxStepHeight = KaoruGroundMotor.DefaultMaxStepHeight;
+    [Tooltip("Vertical speed when climbing a step, in meters per second.")]
+    [Min(0.1f)] [SerializeField] private float stepClimbSpeed = KaoruGroundMotor.DefaultStepClimbSpeed;
+    [Tooltip("Maximum drop to follow while walking. Larger drops use gravity.")]
+    [Min(0f)] [SerializeField] private float groundSnapDistance = KaoruGroundMotor.DefaultGroundSnapDistance;
+
     [Header("Attack")]
     [Tooltip("Multiplies AttackA1 and AttackA2. Animator state base speed remains 1.")]
     [Range(0.1f, 3f)] [SerializeField] private float attackSpeed = 1f;
@@ -55,6 +66,7 @@ public sealed class KaoruTopDownController : MonoBehaviour
     [Min(0f)] [SerializeField] private float walkBackDamping = 0.08f;
 
     private Rigidbody body;
+    private KaoruGroundMotor groundMotor;
     private Animator characterAnimator;
     private int upperBodyLayer = -1;
     private Vector3 movementDirection;
@@ -80,6 +92,7 @@ public sealed class KaoruTopDownController : MonoBehaviour
     private void Awake()
     {
         body = GetComponent<Rigidbody>();
+        groundMotor = new KaoruGroundMotor(body, GetComponent<CapsuleCollider>());
         characterAnimator = GetComponent<Animator>();
         if (animationController != null)
             characterAnimator.runtimeAnimatorController = animationController;
@@ -111,6 +124,7 @@ public sealed class KaoruTopDownController : MonoBehaviour
         if (!ready)
             return;
         movementDirection = Vector3.zero;
+        groundMotor.Reset();
         facingDirection = body.rotation * Vector3.forward;
         targetTurn = 0f;
         attackRequested = false;
@@ -174,11 +188,13 @@ public sealed class KaoruTopDownController : MonoBehaviour
         if (!ready)
             return;
         bool attacking = IsAttacking;
+        float moveSpeed = attacking ? attackMoveSpeed : runSpeed;
         Vector3 planarVelocity = Vector3.ProjectOnPlane(body.linearVelocity, Vector3.up);
-        Vector3 desiredVelocity = movementDirection * (attacking ? attackMoveSpeed : runSpeed);
+        Vector3 desiredVelocity = movementDirection * moveSpeed;
         planarVelocity = Vector3.MoveTowards(planarVelocity, desiredVelocity,
             (desiredVelocity.sqrMagnitude > DirectionEpsilon ? acceleration : deceleration) * Time.fixedDeltaTime);
-        body.linearVelocity = planarVelocity + Vector3.up * body.linearVelocity.y;
+        groundMotor.Move(planarVelocity, movementDirection, moveSpeed,
+            new KaoruGroundMotor.Settings(walkableLayers, maxGroundSlope, maxStepHeight, stepClimbSpeed, groundSnapDistance));
         if (facingDirection.sqrMagnitude <= DirectionEpsilon)
             return;
         float angle = Vector3.SignedAngle(body.rotation * Vector3.forward, facingDirection, Vector3.up);
@@ -308,7 +324,6 @@ public sealed class KaoruTopDownController : MonoBehaviour
             characterAnimator.SetFloat(TurnParameter, 0f);
             characterAnimator.SetFloat(WalkBackParameter, 0f);
         }
-        if (body != null && !body.isKinematic)
-            body.linearVelocity = Vector3.up * body.linearVelocity.y;
+        groundMotor?.Stop();
     }
 }

@@ -22,6 +22,16 @@ public sealed class KaoruEnemyController : MonoBehaviour
     [Min(0f)] [SerializeField] private float runSpeed = 3f;
     [Min(1f)] [SerializeField] private float turnSpeed = 540f;
 
+    [Header("Ground Movement")]
+    [SerializeField] private LayerMask walkableLayers = Physics.AllLayers;
+    [Range(0f, 75f)] [SerializeField] private float maxGroundSlope = KaoruGroundMotor.DefaultMaxGroundSlope;
+    [Tooltip("可跨上的最大台阶高度，单位为米。")]
+    [Min(0f)] [SerializeField] private float maxStepHeight = KaoruGroundMotor.DefaultMaxStepHeight;
+    [Tooltip("上台阶时的垂直移动速度，单位为米每秒。")]
+    [Min(0.1f)] [SerializeField] private float stepClimbSpeed = KaoruGroundMotor.DefaultStepClimbSpeed;
+    [Tooltip("下台阶时可贴地跟随的最大落差，单位为米。")]
+    [Min(0f)] [SerializeField] private float groundSnapDistance = KaoruGroundMotor.DefaultGroundSnapDistance;
+
     [Header("Attack")]
     [Tooltip("双方根物体在 XZ 平面上的距离，不是碰撞体表面间距。")]
     [Min(0.1f)] [SerializeField] private float attackRange = 1.5f;
@@ -61,6 +71,8 @@ public sealed class KaoruEnemyController : MonoBehaviour
     [Min(0f)] [SerializeField] private float corpseLifetime = 4f;
 
     private Rigidbody body;
+    private KaoruGroundMotor groundMotor;
+    private Vector3 desiredPlanarVelocity;
     private KaoruHealth health;
     private KaoruHealth targetHealth;
     private Transform cachedTarget;
@@ -101,6 +113,7 @@ public sealed class KaoruEnemyController : MonoBehaviour
     private void Awake()
     {
         body = GetComponent<Rigidbody>();
+        groundMotor = new KaoruGroundMotor(body, GetComponent<CapsuleCollider>());
         health = GetComponent<KaoruHealth>();
         stateMachine = new KaoruEnemyStateMachine();
         states = new KaoruEnemyStateBase[]
@@ -155,8 +168,11 @@ public sealed class KaoruEnemyController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (ready)
-            stateMachine.FixedTick();
+        if (!ready)
+            return;
+        stateMachine.FixedTick();
+        groundMotor.Move(desiredPlanarVelocity, desiredPlanarVelocity, desiredPlanarVelocity.magnitude,
+            new KaoruGroundMotor.Settings(walkableLayers, maxGroundSlope, maxStepHeight, stepClimbSpeed, groundSnapDistance));
     }
 
     public void SetTarget(Transform newTarget)
@@ -188,7 +204,7 @@ public sealed class KaoruEnemyController : MonoBehaviour
 
     internal void ResumeCombat()
     {
-        if (!TargetIsWithin(loseTargetRadius))
+        if (!TargetIsWithinPursuitRange(loseTargetRadius))
             ChangeState(KaoruEnemyState.Idle);
         else if (TargetIsWithin(attackExitRange))
             ChangeState(KaoruEnemyState.Idle);
@@ -205,6 +221,11 @@ public sealed class KaoruEnemyController : MonoBehaviour
             offset.x * offset.x + offset.z * offset.z <= radius * radius;
     }
 
+    internal bool TargetIsWithinPursuitRange(float radius)
+    {
+        return HasTarget && (target.position - body.position).sqrMagnitude <= radius * radius;
+    }
+
     internal void MoveTowardTarget()
     {
         if (!HasTarget)
@@ -212,18 +233,19 @@ public sealed class KaoruEnemyController : MonoBehaviour
             StopMoving();
             return;
         }
-        Vector3 offset = Vector3.ProjectOnPlane(target.position - body.position, Vector3.up);
+        Vector3 targetOffset = target.position - body.position;
+        Vector3 offset = Vector3.ProjectOnPlane(targetOffset, Vector3.up);
         float distance = offset.magnitude;
-        float speed = Mathf.Min(runSpeed, Mathf.Max(0f, distance - attackRange * 0.9f) / Time.fixedDeltaTime);
-        Vector3 velocity = distance > 0.0001f ? offset / distance * speed : Vector3.zero;
-        body.linearVelocity = velocity + Vector3.up * body.linearVelocity.y;
+        float stopDistance = Mathf.Abs(targetOffset.y) <= maxHeightDifference ? attackRange * 0.9f : 0f;
+        float speed = Mathf.Min(runSpeed, Mathf.Max(0f, distance - stopDistance) / Time.fixedDeltaTime);
+        desiredPlanarVelocity = distance > 0.0001f ? offset / distance * speed : Vector3.zero;
         FaceTarget();
     }
 
     internal void StopMoving()
     {
-        if (body != null && !body.isKinematic)
-            body.linearVelocity = Vector3.up * body.linearVelocity.y;
+        desiredPlanarVelocity = Vector3.zero;
+        groundMotor?.Stop();
     }
 
     internal Vector3 GetDodgeDirection()
@@ -233,8 +255,7 @@ public sealed class KaoruEnemyController : MonoBehaviour
 
     internal void MoveForDodge(Vector3 direction)
     {
-        if (!body.isKinematic)
-            body.linearVelocity = direction * dodgeSpeed + Vector3.up * body.linearVelocity.y;
+        desiredPlanarVelocity = direction * dodgeSpeed;
     }
 
     internal void FaceTarget()
@@ -296,6 +317,8 @@ public sealed class KaoruEnemyController : MonoBehaviour
 
     internal void FreezeForDeath()
     {
+        desiredPlanarVelocity = Vector3.zero;
+        groundMotor.Reset();
         if (!body.isKinematic)
         {
             body.linearVelocity = Vector3.zero;
@@ -372,6 +395,7 @@ public sealed class KaoruEnemyController : MonoBehaviour
         }
         stateMachine?.Clear();
         StopMoving();
+        groundMotor?.Reset();
     }
 
     private void OnValidate()
