@@ -106,6 +106,7 @@ namespace RelicExample.Rendering
         {
             var explicitOwner=t.GetComponentInParent<GlobalOutlineObject>();if(explicitOwner)return explicitOwner.transform;
             var lod=t.GetComponentInParent<LODGroup>();if(lod)return lod.transform;
+            var mask=MaskRoot(t);if(mask)return mask;
             var owner=t;
             for(var p=t.parent;p;p=p.parent)
             {
@@ -114,6 +115,17 @@ namespace RelicExample.Rendering
                 if(Has(name,"SM_Tree","SM_Bush","SM_Shrub","Bush_","Shrub_","SM_Roof","Building","House","Candle","Rock","Cliff","亭子","房屋","蜡烛","石头"))owner=p;
             }
             return owner;
+        }
+        static Transform MaskRoot(Transform t)
+        {
+            for(var p=t;p;p=p.parent)
+            {
+                if(Has(p.name,"面具","傩面","Mask","mianju"))return p;
+                var renderer=p.GetComponent<MeshRenderer>();
+                if(renderer)foreach(var material in renderer.sharedMaterials)
+                    if(material&&material.HasProperty("_MaskToonMarker")&&material.GetFloat("_MaskToonMarker")>0.5f)return p;
+            }
+            return null;
         }
         static void RestoreBlocks(MeshRenderer r,State s)
         {
@@ -152,6 +164,8 @@ namespace RelicExample.Rendering
             if(Has(path,"Kaoru","主角","角色","小怪","Enemy","Canvas","DirtCell"))return false;
             var material=materials[slot];
             if(!material||!material.shader||material.renderQueue>2500)return false;
+            // Keep masks independent of every other automatic category, including when switched off.
+            if(MaskRoot(renderer.transform))return settings.IncludeMasks;
             var part=Part(renderer,materials,slot);
             if(Has(material.shader.name,"Upscale","Water","Terrain"))return false;
             if(part!=VegetationPart.Bush&&(Has(material.shader.name,"SG_Grass")||Has(material.name,"草")||Has(path,"Grass")))return false;

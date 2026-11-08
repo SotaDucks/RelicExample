@@ -21,6 +21,7 @@ namespace RelicExample.Rendering
         [SerializeField] bool includeBuildings = true;
         [SerializeField] bool includeCandles = true;
         [SerializeField] bool includeRocks = true;
+        [SerializeField] bool includeMasks = true;
         [SerializeField] Material outlineMaterial;
 
         static GlobalOutlineSettings instance;
@@ -35,6 +36,7 @@ namespace RelicExample.Rendering
         public bool IncludeBuildings => includeBuildings;
         public bool IncludeCandles => includeCandles;
         public bool IncludeRocks => includeRocks;
+        public bool IncludeMasks => includeMasks;
         public Material OutlineMaterial => outlineMaterial;
 
         public void SetThickness(float renderPixels) { thickness = Mathf.Clamp(renderPixels, 0, 6); Apply(); }

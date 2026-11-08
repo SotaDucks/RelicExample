@@ -26,6 +26,8 @@ namespace RelicExample.EditorTools
             Field("includeBuildings", "建筑与灯笼");
             Field("includeCandles", "蜡烛");
             Field("includeRocks", "石头与岩壁");
+            Field("includeMasks", "傩戏面具");
+            if (GUILayout.Button("打开面具三渲二材质")) MaskToonShaderGUI.Open();
             advanced = EditorGUILayout.Foldout(advanced, "高级：外轮廓平滑", true);
             if (advanced)
             {

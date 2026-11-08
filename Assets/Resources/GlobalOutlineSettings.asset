@@ -26,4 +26,5 @@ MonoBehaviour:
   includeBuildings: 1
   includeCandles: 1
   includeRocks: 1
+  includeMasks: 1
   outlineMaterial: {fileID: 2100000, guid: 0b80b51348ef3194096f70413ad52956, type: 2}
