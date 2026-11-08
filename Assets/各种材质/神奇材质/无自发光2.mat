@@ -56,7 +56,7 @@ Material:
     - _Variation_Value: 0.3
     - _Wind_Strength: 0.2
     m_Colors:
-    - _Base_Color: {r: 1, g: 0.17924517, b: 0.19351909, a: 0}
+    - _Base_Color: {r: 0.9622642, g: 0.5295478, b: 0.7172941, a: 0}
     - _Bottom_Color: {r: 0.13216446, g: 0.15098788, b: 0.16981131, a: 0}
     - _Emission_Color: {r: 0, g: 0, b: 0, a: 0}
     - _Inner_Color: {r: 0.34509805, g: 0.09411764, b: 0.16213414, a: 0}

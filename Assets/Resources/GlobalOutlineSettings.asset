@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bc5e0c32031b0340b8802252b9eebb6, type: 3}
+  m_Name: GlobalOutlineSettings
+  m_EditorClassIdentifier: Assembly-CSharp::RelicExample.Rendering.GlobalOutlineSettings
+  outlineEnabled: 1
+  thickness: 0.33
+  outlineColor: {r: 0.05660379, g: 0.038593493, b: 0, a: 1}
+  opacity: 0.72
+  rimHighlight: 0.3
+  silhouetteSmoothing: 1
+  suppressCanopyHoles: 1
+  includeTreeCanopies: 0
+  includeBushes: 1
+  includeTrunks: 1
+  vegetationSettingsVersion: 1
+  includeBuildings: 1
+  includeCandles: 1
+  includeRocks: 1
+  outlineMaterial: {fileID: 2100000, guid: 0b80b51348ef3194096f70413ad52956, type: 2}

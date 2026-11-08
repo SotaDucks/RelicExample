@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: GlobalOutline
+  m_Shader: {fileID: 4800000, guid: 5cf7a5bbf878f7b45a726dae36121a5a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _CreaseStrength: 0.25
+    - _DepthThreshold: 0.12
+    - _NormalThreshold: 0.55
+    - _OutlineDebug: 0
+    - _OutlineEnabled: 1
+    - _OutlineOpacity: 0.72
+    - _OutlineWidth: 0.33
+    - _RimHighlight: 0.3
+    - _SuppressCanopyHoles: 1
+    m_Colors:
+    - _OutlineColor: {r: 0.05660379, g: 0.038593493, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

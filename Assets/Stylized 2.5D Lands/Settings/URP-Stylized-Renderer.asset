@@ -46,6 +46,22 @@ MonoBehaviour:
     FullScreenColorGrading: {fileID: 4800000, guid: d5205d08ab9a61a4fa1cdf7f0ab15dc2, type: 3}
     SceneRecomposition: {fileID: 4800000, guid: 4f9c7b9bd70101044a040d46b79507b5, type: 3}
     OutlineDetection: {fileID: 4800000, guid: c59878161c7e0ad40b0661b47620d0e5, type: 3}
+--- !u!114 &-5104483607545791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c745d3bad822a7442aaf63b39ddfa46b, type: 3}
+  m_Name: Global Adjustable Outline
+  m_EditorClassIdentifier: Assembly-CSharp::RelicExample.Rendering.GlobalOutlineRendererFeature
+  m_Active: 1
+  settings: {fileID: 11400000, guid: f15cc0d3e0e1e884083951c0ecdc2d56, type: 2}
+  morphologyShader: {fileID: 4800000, guid: 4d0ac5f0caddf25439e48d0ee9616049, type: 3}
+  objectIdShader: {fileID: 4800000, guid: dfd009bcd5474c5419e5fd586337140d, type: 3}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73,10 +89,11 @@ MonoBehaviour:
   m_RendererFeatures:
   - {fileID: 1873521919734205608}
   - {fileID: -4788613622772824277}
-  - {fileID: -2892484318260103568}
-  m_RendererFeatureMap: a84caa784216001a2b870700486d8bbd70f6b76bd6d4dbd7
+  - {fileID: 0}
+  - {fileID: -5104483607545791}
+  m_RendererFeatureMap: a84caa784216001a2b870700486d8bbd00000000000000004178cfcb7fddedff
   m_UseNativeRenderPass: 1
-  xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
+  xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   m_AssetVersion: 3
   m_PrepassLayerMask:
@@ -115,7 +132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b3d386ba5cd94485973aee1479b272e, type: 3}
   m_Name: OutLine
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   settings:
     passTag: OutLine
     Event: 300
