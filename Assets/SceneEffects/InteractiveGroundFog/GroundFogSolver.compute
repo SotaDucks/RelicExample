@@ -1,0 +1,330 @@
+#pragma kernel Initialize
+#pragma kernel ShiftWindow
+#pragma kernel AdvectVelocity
+#pragma kernel BuildCurl
+#pragma kernel ConfineVorticity
+#pragma kernel BuildDivergence
+#pragma kernel SolvePressure
+#pragma kernel ProjectVelocity
+#pragma kernel AdvectDensity
+#pragma kernel UpdateHistory
+
+Texture2D<float2> _VelocityRead;
+Texture2D<float> _DensityRead;
+Texture2D<float4> _MotionRead;
+Texture2D<float> _PressureRead;
+Texture2D<float> _DivergenceRead;
+Texture2D<float> _CurlRead;
+Texture2D<float4> _HistoryRead;
+Texture2D<float2> _HistoryVelocityRead;
+Texture2D<float4> _RestDensity;
+Texture3D<float4> _PatternDetail;
+RWTexture2D<float2> _VelocityWrite;
+RWTexture2D<float> _DensityWrite;
+RWTexture2D<float4> _MotionWrite;
+RWTexture2D<float> _PressureWrite;
+RWTexture2D<float> _DivergenceWrite;
+RWTexture2D<float> _CurlWrite;
+RWTexture2D<float4> _HistoryWrite;
+RWTexture2D<float2> _HistoryVelocityWrite;
+SamplerState sampler_linear_clamp;
+SamplerState sampler_linear_repeat;
+
+#include "GroundFogWorldPattern.hlsl"
+
+int _Resolution;
+int2 _WindowShift;
+float2 _FieldSize;
+float2 _FieldCenter;
+float4 _HistoryArea;
+float4 _Stroke;
+float _StepTime;
+float _DensityPatternSize;
+float _PatternTime;
+float _InteractionRadius;
+float _PushStrength;
+float _ClearingRate;
+float _RecoveryRate;
+float _RedistributedDensity;
+float _LiftHalfLife;
+float _VorticityStrength;
+float _VelocityDamping;
+
+float2 CellUV(int2 cell)
+{
+    return (float2(cell) + 0.5) / _Resolution;
+}
+
+int2 ClampCell(int2 cell)
+{
+    return clamp(cell, 0, _Resolution - 1);
+}
+
+float WorldRestDensity(float2 worldXZ)
+{
+    return SampleGroundFogPattern(_RestDensity, sampler_linear_clamp,
+        _PatternDetail, sampler_linear_repeat, worldXZ, _DensityPatternSize, _PatternTime);
+}
+
+float2 WorldXZ(float2 uv)
+{
+    return _FieldCenter + (uv - 0.5) * _FieldSize;
+}
+
+float2 HistoryUV(float2 worldXZ)
+{
+    return (worldXZ - _HistoryArea.xy) / _HistoryArea.zw + 0.5;
+}
+
+bool Inside(float2 uv)
+{
+    return all(uv >= 0.0) && all(uv <= 1.0);
+}
+
+float2 StrokeOffset(float2 world, float2 motion)
+{
+    float along = saturate(dot(world - _Stroke.xy, motion) / max(dot(motion, motion), 0.000001));
+    return world - (_Stroke.xy + motion * along);
+}
+
+float2 Vortex(float2 offset)
+{
+    float2 localOffset = offset / _InteractionRadius;
+    return float2(-localOffset.y, localOffset.x) * exp(-2.1 * dot(localOffset, localOffset));
+}
+
+float RemovalFraction(float2 offset, float moveWeight)
+{
+    float distanceInRadii = length(offset) / _InteractionRadius;
+    float weight = 1.0 - smoothstep(0.22, 1.08, distanceInRadii);
+    return 1.0 - exp(-_ClearingRate * _StepTime * weight * moveWeight);
+}
+
+float GatherDisplacedDensity(float2 sourceUV, float2 motion, float2 outward, float moveWeight)
+{
+    if (any(sourceUV < 0) || any(sourceUV > 1))
+        return 0;
+
+    float2 sourceWorld = (sourceUV - 0.5) * _FieldSize;
+    float2 offset = StrokeOffset(sourceWorld, motion);
+    float sideShare = smoothstep(-0.38, 0.38, dot(offset, outward) / _InteractionRadius);
+    float share = RemovalFraction(offset, moveWeight) * sideShare;
+    if (share < 0.0001)
+        return 0;
+
+    float2 velocity = _VelocityRead.SampleLevel(sampler_linear_clamp, sourceUV, 0);
+    float2 sourceBack = sourceUV - (velocity + GroundFogAmbientWind) * _StepTime / _FieldSize;
+    return _DensityRead.SampleLevel(sampler_linear_clamp, sourceBack, 0) * share;
+}
+
+[numthreads(8, 8, 1)]
+void Initialize(uint3 thread : SV_DispatchThreadID)
+{
+    int2 cell = int2(thread.xy);
+    _VelocityWrite[cell] = 0;
+    _DensityWrite[cell] = WorldRestDensity(WorldXZ(CellUV(cell)));
+    _MotionWrite[cell] = 0;
+    _HistoryWrite[cell] = 0;
+    _HistoryVelocityWrite[cell] = 0;
+}
+
+[numthreads(8, 8, 1)]
+void ShiftWindow(uint3 thread : SV_DispatchThreadID)
+{
+    int2 cell = int2(thread.xy);
+    int2 source = cell + _WindowShift;
+    if (any(source < 0) || any(source >= _Resolution))
+    {
+        float2 world = WorldXZ(CellUV(cell));
+        float2 historyUV = HistoryUV(world);
+        float4 history = 0;
+        float2 velocity = 0;
+        if (Inside(historyUV))
+        {
+            history = _HistoryRead.SampleLevel(sampler_linear_clamp, historyUV, 0);
+            velocity = _HistoryVelocityRead.SampleLevel(sampler_linear_clamp, historyUV, 0);
+        }
+        _VelocityWrite[cell] = velocity;
+        _DensityWrite[cell] = clamp(WorldRestDensity(world) + history.x, 0.0, 1.5);
+        _MotionWrite[cell] = float4(history.y, history.zw / _FieldSize, 0.0);
+        return;
+    }
+
+    _VelocityWrite[cell] = _VelocityRead[source];
+    _DensityWrite[cell] = _DensityRead[source];
+    _MotionWrite[cell] = _MotionRead[source];
+}
+
+[numthreads(8, 8, 1)]
+void AdvectVelocity(uint3 thread : SV_DispatchThreadID)
+{
+    int2 cell = int2(thread.xy);
+    float2 uv = CellUV(cell);
+    float2 back = uv - (_VelocityRead[cell] + GroundFogAmbientWind) * _StepTime / _FieldSize;
+    float2 velocity = _VelocityRead.SampleLevel(sampler_linear_clamp, back, 0) * exp(-_VelocityDamping * _StepTime);
+
+    float2 motion = _Stroke.zw - _Stroke.xy;
+    float speed = min(length(motion) / _StepTime, 12.0);
+    if (speed > 0.04)
+    {
+        float2 direction = normalize(motion);
+        float2 side = float2(-direction.y, direction.x);
+        float2 world = (uv - 0.5) * _FieldSize;
+        float distanceToStroke = length(StrokeOffset(world, motion));
+        float weight = 1.0 - smoothstep(0.15, 1.65, distanceToStroke / _InteractionRadius);
+        velocity = lerp(velocity, direction * speed * 0.70, 1.0 - exp(-_PushStrength * weight * _StepTime));
+
+        // Opposite circulation on the two sides turns the edges of the wake back in.
+        float2 wake = world - (_Stroke.xy - direction * (0.35 * _InteractionRadius));
+        float2 spacing = side * (0.78 * _InteractionRadius);
+        velocity += (Vortex(wake - spacing) - Vortex(wake + spacing)) * (speed * 3.5 * _StepTime);
+    }
+
+    _VelocityWrite[cell] = velocity;
+}
+
+[numthreads(8, 8, 1)]
+void BuildCurl(uint3 thread : SV_DispatchThreadID)
+{
+    int2 cell = int2(thread.xy);
+    float2 cellSize = _FieldSize / _Resolution;
+    float left = _VelocityRead[ClampCell(cell - int2(1, 0))].y;
+    float right = _VelocityRead[ClampCell(cell + int2(1, 0))].y;
+    float down = _VelocityRead[ClampCell(cell - int2(0, 1))].x;
+    float up = _VelocityRead[ClampCell(cell + int2(0, 1))].x;
+    _CurlWrite[cell] = 0.5 * ((right - left) / cellSize.x - (up - down) / cellSize.y);
+}
+
+[numthreads(8, 8, 1)]
+void ConfineVorticity(uint3 thread : SV_DispatchThreadID)
+{
+    int2 cell = int2(thread.xy);
+    float2 cellSize = _FieldSize / _Resolution;
+    float left = abs(_CurlRead[ClampCell(cell - int2(1, 0))]);
+    float right = abs(_CurlRead[ClampCell(cell + int2(1, 0))]);
+    float down = abs(_CurlRead[ClampCell(cell - int2(0, 1))]);
+    float up = abs(_CurlRead[ClampCell(cell + int2(0, 1))]);
+    float2 gradient = float2(right - left, up - down) / cellSize;
+    gradient /= max(length(gradient), 0.001);
+
+    // A perpendicular force reinforces the rotation that survives advection.
+    float strength = _VorticityStrength * min(cellSize.x, cellSize.y) * _CurlRead[cell];
+    float2 impulse = float2(gradient.y, -gradient.x) * (clamp(strength, -7.0, 7.0) * _StepTime);
+    _VelocityWrite[cell] = _VelocityRead[cell] + impulse;
+}
+
+[numthreads(8, 8, 1)]
+void BuildDivergence(uint3 thread : SV_DispatchThreadID)
+{
+    int2 cell = int2(thread.xy);
+    float2 cellSize = _FieldSize / _Resolution;
+    float left = _VelocityRead[ClampCell(cell - int2(1, 0))].x;
+    float right = _VelocityRead[ClampCell(cell + int2(1, 0))].x;
+    float down = _VelocityRead[ClampCell(cell - int2(0, 1))].y;
+    float up = _VelocityRead[ClampCell(cell + int2(0, 1))].y;
+    _DivergenceWrite[cell] = 0.5 * ((right - left) / cellSize.x + (up - down) / cellSize.y);
+    _PressureWrite[cell] = 0;
+}
+
+[numthreads(8, 8, 1)]
+void SolvePressure(uint3 thread : SV_DispatchThreadID)
+{
+    int2 cell = int2(thread.xy);
+    float2 inverseCell = _Resolution / _FieldSize;
+    float2 weight = inverseCell * inverseCell;
+    float left = _PressureRead[ClampCell(cell - int2(1, 0))];
+    float right = _PressureRead[ClampCell(cell + int2(1, 0))];
+    float down = _PressureRead[ClampCell(cell - int2(0, 1))];
+    float up = _PressureRead[ClampCell(cell + int2(0, 1))];
+    _PressureWrite[cell] = ((left + right) * weight.x + (down + up) * weight.y - _DivergenceRead[cell])
+        / (2.0 * (weight.x + weight.y));
+}
+
+[numthreads(8, 8, 1)]
+void ProjectVelocity(uint3 thread : SV_DispatchThreadID)
+{
+    int2 cell = int2(thread.xy);
+    float left = _PressureRead[ClampCell(cell - int2(1, 0))];
+    float right = _PressureRead[ClampCell(cell + int2(1, 0))];
+    float down = _PressureRead[ClampCell(cell - int2(0, 1))];
+    float up = _PressureRead[ClampCell(cell + int2(0, 1))];
+    float2 velocity = _VelocityRead[cell] - float2(right - left, up - down) * (0.5 * _Resolution / _FieldSize);
+    if (cell.x == 0 || cell.x == _Resolution - 1)
+        velocity.x = 0;
+    if (cell.y == 0 || cell.y == _Resolution - 1)
+        velocity.y = 0;
+    _VelocityWrite[cell] = velocity;
+}
+
+[numthreads(8, 8, 1)]
+void AdvectDensity(uint3 thread : SV_DispatchThreadID)
+{
+    int2 cell = int2(thread.xy);
+    float2 uv = CellUV(cell);
+    float2 travel = _VelocityRead[cell] * _StepTime / _FieldSize;
+    float2 back = uv - travel - GroundFogAmbientWind * _StepTime / _FieldSize;
+    float density = _DensityRead.SampleLevel(sampler_linear_clamp, back, 0);
+    float rest = WorldRestDensity(WorldXZ(uv));
+
+    float2 motion = _Stroke.zw - _Stroke.xy;
+    float speed = length(motion) / _StepTime;
+    float moveWeight = smoothstep(0.05, 1.6, speed);
+    float displaced = 0.0;
+    if (moveWeight > 0.0)
+    {
+        float2 world = (uv - 0.5) * _FieldSize;
+        float2 outward = normalize(float2(-motion.y, motion.x));
+        float2 sideShift = outward * (0.98 * _InteractionRadius) / _FieldSize;
+
+        // Gather from the swept strip on both sides. The source shares add to one.
+        float left = GatherDisplacedDensity(uv + sideShift, motion, -outward, moveWeight);
+        float right = GatherDisplacedDensity(uv - sideShift, motion, outward, moveWeight);
+        displaced = (left + right) * _RedistributedDensity;
+        density = density * (1.0 - RemovalFraction(StrokeOffset(world, motion), moveWeight)) + displaced;
+    }
+
+    _DensityWrite[cell] = clamp(lerp(density, rest, 1.0 - exp(-_RecoveryRate * _StepTime)), 0.0, 1.5);
+
+    // X is lift and YZ carry horizontal detail displacement in texture coordinates.
+    float4 previousMotion = _MotionRead.SampleLevel(sampler_linear_clamp, back, 0);
+    float lift = max(previousMotion.x * exp2(-_StepTime / max(_LiftHalfLife, 0.02)), saturate(displaced * 3.8));
+    float2 detailOffset = previousMotion.yz * exp2(-_StepTime / 0.85) + travel;
+    detailOffset *= min(1.0, 1.1 / max(0.0001, length(detailOffset * _FieldSize)));
+    _MotionWrite[cell] = float4(lift, detailOffset, 0.0);
+}
+
+[numthreads(8, 8, 1)]
+void UpdateHistory(uint3 thread : SV_DispatchThreadID)
+{
+    int2 cell = int2(thread.xy);
+    float2 uv = CellUV(cell);
+    float2 world = _HistoryArea.xy + (uv - 0.5) * _HistoryArea.zw;
+    float2 travel = _HistoryVelocityRead[cell] * _StepTime;
+    float2 back = uv - (travel + GroundFogAmbientWind * _StepTime) / _HistoryArea.zw;
+    float4 wake = 0;
+    float2 velocity = 0;
+    if (Inside(back))
+    {
+        float4 previous = _HistoryRead.SampleLevel(sampler_linear_clamp, back, 0);
+        velocity = _HistoryVelocityRead.SampleLevel(sampler_linear_clamp, back, 0) * exp(-_VelocityDamping * _StepTime);
+        float2 detailOffset = previous.zw * exp2(-_StepTime / 0.85) + travel;
+        detailOffset *= min(1.0, 1.1 / max(0.0001, length(detailOffset)));
+        wake = float4(previous.x * exp(-0.75 * _RecoveryRate * _StepTime),
+            previous.y * exp2(-_StepTime / max(_LiftHalfLife, 0.02)), detailOffset);
+    }
+
+    float2 liveUV = (world - _FieldCenter) / _FieldSize + 0.5;
+    float2 edgeDistance = min(liveUV, 1.0 - liveUV);
+    float capture = smoothstep(0.0, 0.22, min(edgeDistance.x, edgeDistance.y));
+    if (capture > 0.0001)
+    {
+        float density = _DensityRead.SampleLevel(sampler_linear_clamp, liveUV, 0);
+        float4 motion = _MotionRead.SampleLevel(sampler_linear_clamp, liveUV, 0);
+        float4 observed = float4(density - WorldRestDensity(world), motion.x, motion.yz * _FieldSize);
+        wake = lerp(wake, observed, capture);
+        velocity = lerp(velocity, _VelocityRead.SampleLevel(sampler_linear_clamp, liveUV, 0), capture);
+    }
+
+    _HistoryWrite[cell] = wake;
+    _HistoryVelocityWrite[cell] = velocity;
+}
