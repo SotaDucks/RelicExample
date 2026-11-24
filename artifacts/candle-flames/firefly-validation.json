@@ -1,0 +1,9 @@
+{
+  "fireflies": 23,
+  "moving": 20,
+  "worldMin": "(55.04, 7.98, 99.43)",
+  "worldMax": "(60.36, 10.32, 104.72)",
+  "parent": "SM_Roof_05 (1)",
+  "shader": "RelicExample/Firefly Glow",
+  "scene": "Assets/场景/ZQY 1.unity"
+}

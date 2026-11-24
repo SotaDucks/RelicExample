@@ -21,13 +21,13 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Water
-  m_Shader: {fileID: -6465566751694194690, guid: e5f8f434dc0fbdf42ae4fa014c80951e, type: 3}
-  m_Parent: {fileID: 2100000, guid: 5a36b2bc5eacb6b4a9bb2802c2da017f, type: 2}
+  m_Shader: {fileID: -6465566751694194690, guid: 20d360642f7a3fd48b9509f622d23431, type: 3}
+  m_Parent: {fileID: 2100000, guid: 28bafd77708cad44b83b4149534b1e07, type: 2}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
+  m_ValidKeywords: []
+  m_InvalidKeywords:
   - _CLOUDSENABLED
   - _REFLECTIONSON
-  m_InvalidKeywords:
   - _SPECULAR_SETUP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
